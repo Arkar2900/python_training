@@ -1,5 +1,5 @@
 # 1
-number1 = 10
+number1 = 40
 number2 = 40
 if number1 * number2 < 500:
     print('The result is ', number1 * number2)
