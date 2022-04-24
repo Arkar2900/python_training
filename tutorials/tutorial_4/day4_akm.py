@@ -4,13 +4,12 @@ square_list = []
 cube_list = []
 square = lambda i: i * i
 cube = lambda j: j * j * j
-for sq in L:
-    val = square(sq)
-    square_list.append(val)
+for val in L:
+    sq_val = square(val)
+    cub_val = cube(val)
+    square_list.append(sq_val)
+    cube_list.append(cub_val)
 print(square_list)
-for cub in L:
-    val = cube(cub)
-    cube_list.append(val)
 print(cube_list)
 
 
@@ -22,4 +21,5 @@ def star_function(x):
         i = i + 1
 
 
+star_function("*")
 star_function("?")
