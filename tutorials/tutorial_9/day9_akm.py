@@ -4,7 +4,7 @@ import math
 def check_choice(a):
     if a.isdigit() and int(a) > 0 and int(a) < 9:
         return True
-    elif a.lower() in 'add' or x.lower() in 'subtract' or x.lower() in 'multiply' or x.lower() in 'divide' or x.lower() in 'power' or x.lower() in 'modulo' or x.lower() in 'square-root' or x.lower() in 'cube':
+    elif a.lower() == 'add' or x.lower() == 'subtract' or x.lower() == 'multiply' or x.lower() == 'divide' or x.lower() == 'power' or x.lower() == 'modulo' or x.lower() == 'square-root' or x.lower() == 'cube':
         return True
     else:
         return False
@@ -52,7 +52,9 @@ def req_num2():
 
 
 while True:
-    print("Select operation.\n 1.Add\n 2.Subtract\n 3.Multiply\n 4.Divide\n 5.power\n 6.modulo\n 7.square-root\n 8.cube\n")
+    print("Select operation.\n \
+1.Add\n 2.Subtract\n 3.Multiply\n \
+4.Divide\n 5.Power\n 6.Modulo\n 7.Square-root\n 8.Cube\n")
     x = input("Enter a choice: ")
     if check_choice(x):
         if x == '1' or x.lower() in 'add':
@@ -91,11 +93,11 @@ while True:
         print("Enter the valid key!!!")
     while True:
         y = input("Let's do next calculation? (yes/no): ")
-        if y == "no" or y == 'yes':
+        if y.lower() == "no" or y.lower() == 'yes':
             break
         else:
             print("Please enter one of the valid words (yes/no)!!!")
-    if y == "no":
+    if y.lower() == "no":
         break
     else:
         continue
