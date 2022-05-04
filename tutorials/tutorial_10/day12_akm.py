@@ -161,6 +161,12 @@ while True:
             elif val == '2':
                 val = 'o'
             data1["choose"] = val
+            if data1["choose"] == 'x':
+                choose = 'o'
+                data2["choose"] = choose
+            elif data1["choose"] == 'o':
+                choose = 'x'
+                data2["choose"] = choose
     else:
         print("Turn to choose for " + p2)
         val = check_val()
@@ -172,6 +178,12 @@ while True:
             elif val == '2':
                 val = 'o'
             data2["choose"] = val
+            if data2["choose"] == 'x':
+                choose = 'o'
+                data1["choose"] = choose
+            elif data2["choose"] == 'o':
+                choose = 'x'
+                data1["choose"] = choose
     show_board(board_list)
     while True:
         req_position()
