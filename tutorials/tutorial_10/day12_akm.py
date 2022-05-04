@@ -55,7 +55,11 @@ def req_position():
     global box_num
     while True:
         print("Player " + val + " turn.")
-        box_num = int(input("Which box? : "))
+        try:
+            box_num = int(input("Which box? : "))
+        except ValueError:
+            print("This is not a number. Please enter the valid number!")
+            continue
         if box_num > 0 and box_num < 10:
             if position_free(box_num):
                 board_list[box_num - 1] = val
@@ -209,7 +213,8 @@ while True:
                     turn = 0
             break
         else:
-            if val == 'x':
+            # if noone win the game
+            if val == 'x':  # to show x and o alternately
                 val = 'o'
             else:
                 val = 'x'
