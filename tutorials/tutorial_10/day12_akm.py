@@ -100,6 +100,7 @@ def check_win(list):
         if(
             list[4] == list[0] and list[4] == list[8] or
             list[4] == list[3] and list[4] == list[5] or
+            list[4] == list[1] and list[4] == list[7] or
             list[4] == list[2] and list[4] == list[6]
         ):
             return True
@@ -180,9 +181,19 @@ while True:
             if val == data1["choose"]:
                 data1["score"] += 1
                 score[0] = data1["score"]
+                board_list = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+                if turn == 0:
+                    turn = 1
+                else:
+                    turn = 0
             elif val == data2["choose"]:
                 data2["score"] += 1
                 score[1] = data2["score"]
+                board_list = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+                if turn == 0:
+                    turn = 1
+                else:
+                    turn = 0
             break
         else:
             if val == 'x':
