@@ -185,6 +185,7 @@ while True:
                 choose = 'x'
                 data1["choose"] = choose
     show_board(board_list)
+    i = 1
     while True:
         req_position()
         show_board(board_list)
@@ -212,5 +213,10 @@ while True:
                 val = 'o'
             else:
                 val = 'x'
+            i += 1
+            if i == 10:
+                print("Draw!!!")
+                board_list = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+                break
             continue
     show_score(score)
