@@ -1,9 +1,4 @@
 import random
-from secrets import choice
-from traceback import print_tb
-from turtle import Turtle
-
-
 print("Welcome to Rock, Paper, Scissors! Press Enter to start.")
 input()
 win_list = [0, 0]
