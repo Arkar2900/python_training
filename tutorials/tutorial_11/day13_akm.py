@@ -46,6 +46,8 @@ while True:
     play_agian = None
     while play_agian not in yn_list:
         play_agian = input("Play again? (Y/N)").upper()
+        if play_agian not in yn_list:
+            print("Please enter the valid key. (Y / N)!")
     if play_agian == "N":
         print("--------------------------------------------")
         break
