@@ -8,7 +8,7 @@ def count_up():
     while True:
         try:
             start_time = int(input("Enter start time (sec): "))
-            stop_time = int(input("Enter end time (sec): "))
+            stop_time = int(input("How much sec do you want to count up?: "))
             if stop_time <= 0 or start_time <= 0:
                 print("The input time should be positive number!")
                 continue
@@ -28,7 +28,7 @@ def count_down():
     while True and start_time <= 0 and start_time - stop_time <= 0:
         try:
             start_time = int(input("Enter start time (sec): "))
-            stop_time = int(input("Enter end time (sec): "))
+            stop_time = int(input("How much sec do you want to count down?: "))
             if stop_time < 0 or start_time < 0:
                 print("The input time should be positive number!")
                 continue
