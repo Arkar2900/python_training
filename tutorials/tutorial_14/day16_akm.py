@@ -201,7 +201,7 @@ while True:
             val = 'x'
         elif val == '2':
             val = 'o'
-            data2["choose"] = val
+        data2["choose"] = val
         if data2["choose"] == 'x':
             choose = 'o'
             data1["choose"] = choose
