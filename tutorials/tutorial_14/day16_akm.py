@@ -176,38 +176,22 @@ data2 = {
         }
 board_list = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
 while True:
-    if turn == 0:
-        print("Turn to choose for " + p1)
-        val = check_val()
-        if val == '3':
-            break
-        else:
-            if val == '1':
-                val = 'x'
-            elif val == '2':
-                val = 'o'
-            data1["choose"] = val
-            if data1["choose"] == 'x':
-                choose = 'o'
-                data2["choose"] = choose
-            elif data1["choose"] == 'o':
-                choose = 'x'
-                data2["choose"] = choose
+    print("Please choose an option, " + p1)
+    val = check_val()
+    if val == '3':
+        break
     else:
-        print("Turn to choose for " + p2)
-        com_val = com_check_val()
-        val = com_val
         if val == '1':
             val = 'x'
         elif val == '2':
             val = 'o'
-        data2["choose"] = val
-        if data2["choose"] == 'x':
+        data1["choose"] = val
+        if data1["choose"] == 'x':
             choose = 'o'
-            data1["choose"] = choose
-        elif data2["choose"] == 'o':
+            data2["choose"] = choose
+        elif data1["choose"] == 'o':
             choose = 'x'
-            data1["choose"] = choose
+            data2["choose"] = choose
     show_board(board_list)
     i = 1
     while True:
@@ -223,18 +207,12 @@ while True:
                 data1["score"] += 1
                 score[0] = data1["score"]
                 board_list = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
-                if turn == 0:
-                    turn = 1
-                else:
-                    turn = 0
+                turn = 0
             elif val == data2["choose"]:
                 data2["score"] += 1
                 score[1] = data2["score"]
                 board_list = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
-                if turn == 0:
-                    turn = 1
-                else:
-                    turn = 0
+                turn = 0
             break
         else:
             # if noone win the game
@@ -251,6 +229,7 @@ while True:
                 print("Draw!!!")
                 board_list = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
                 box_num = None
+                turn = 0
                 break
             continue
     show_score(score)
