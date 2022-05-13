@@ -1,0 +1,7 @@
+.usr-form input:nth-last-child(1) {
+  color: #fff;
+  background-color: #800080;
+  border: none;
+  padding: 10px 30px;
+  border-radius: 10px;
+}
