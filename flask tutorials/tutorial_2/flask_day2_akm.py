@@ -7,7 +7,7 @@ def hello_world():
     return 'hello world'
 
 
-app.add_url_rule('/hello_world', 'hello', hello_world)
+app.add_url_rule('/hello_world', 'hi', hello_world)
 
 
 @app.route('/')
