@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 
 
 app = Flask(__name__)
@@ -17,12 +17,23 @@ def result():
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    message = None
+    return render_template("index.html", message=message)
 
 
-@app.route("/press", methods=['post'])
+@app.route("/press", methods=['POST', 'GET'])
 def press():
-    return 'You pressed the submit button!'
+    message = None
+    if request.method == 'POST':
+        name = request.form['name']
+        mail = request.form['mail']
+        pw = request.form['pw']
+        check_pw = request.form['check_pw']
+        while not name or not mail or not pw or not check_pw:
+            if not name or not mail or not pw or not check_pw:
+                message = 'The input box should not be blank'
+                return render_template("index.html", message=message)
+        return 'You pressed the submit button!'
 
 
 if __name__ == '__main__':

@@ -7,6 +7,11 @@
   <link rel="stylesheet" href="{{ url_for('static', filename = 'hello.css') }}">
 </head>
 <body>
+	{% if message != None %}
+		<p> You have to fill every input box! Please fill it again.</p>
+	{% else %}
+		<p>Welcome!</p>
+	{% endif %}
   <form action="http://localhost:5000/press" class="usr-form" method="post">
 		<h3>Username</h3>
 		<input type="text" name="name" value=""><br>
@@ -15,7 +20,7 @@
 		<h3>Password</h3>
 		<input type="password" name="pw" value=""><br>
 		<h3>Password check</h3>
-		<input type="password" name="pw" value="" placeholder="re-enter"><br><br>
+		<input type="password" name="check_pw" value="" placeholder="re-enter"><br><br>
 		<input type = "submit" value = "Submit" >
 	</form>
 </body>

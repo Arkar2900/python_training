@@ -17,12 +17,12 @@ def index():
 
 @app.route('/admin/<name>')
 def hello_admin(name):
-    return 'Hello Admin,  %s' % name
+    return 'Hello Admin,  {}'.format(name)
 
 
 @app.route('/guest/<name>')
 def hello_guest(name):
-    return '%s is unauthorized user.' % name
+    return '{} is unauthorized user.'.format(name)
 
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -31,8 +31,7 @@ def login():
     user = request.form['nm'].upper()
     if user == admin:
         return redirect(url_for('hello_admin', name=user))
-    else:
-        return redirect(url_for('hello_guest', name=user))
+    return redirect(url_for('hello_guest', name=user))
 
 
 if __name__ == '__main__':
