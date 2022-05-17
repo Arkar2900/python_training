@@ -32,8 +32,7 @@ Please insert your credentials.'
         return render_template("login.html", error1=error1, error2=error2)
     if (
       request.method == 'POST' and request.form['pass'] == 'admin' and
-      request.form['email'] == 'admin' and request.form['pass'] and
-      request.form['email']
+      request.form['email'] == 'admin'
     ):
         session['logged_in'] = True
         return render_template("success.html")

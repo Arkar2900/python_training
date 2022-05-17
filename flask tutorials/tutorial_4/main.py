@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request
 from werkzeug.utils import secure_filename
+import time
+import os
 
 
 app = Flask(__name__)
@@ -25,11 +27,20 @@ def upload():
 @app.route('/uploader', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
-        f = request.files['file']
-        f.save(secure_filename(f.filename))
-        st1 = 'file uploaded successfully'
-        print(f.filename)
-        return st1
+        my_file = request.files['file']
+        timestr = time.strftime("%Y%m%d")
+        print(timestr)
+        path = os.getcwd()
+        folder_name = r'\my_folder'
+        folder_time = r'\{}'.format(timestr)
+        if not os.path.exists(path + folder_name):
+            os.mkdir(path + folder_name)
+        folder_to_save_files = path + folder_name + folder_time
+        if not os.path.exists(folder_to_save_files):
+            os.mkdir(folder_to_save_files)
+        my_file.save(os.path.join(folder_to_save_files, my_file.filename))
+        print(os.path.join(folder_to_save_files, my_file.filename))
+        return 'file uploaded successfully'
 
 
 if __name__ == '__main__':
