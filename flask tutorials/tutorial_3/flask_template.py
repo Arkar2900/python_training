@@ -29,10 +29,9 @@ def press():
         mail = request.form['mail']
         pw = request.form['pw']
         check_pw = request.form['check_pw']
-        while not name or not mail or not pw or not check_pw:
-            if not name or not mail or not pw or not check_pw:
-                message = 'The input box should not be blank'
-                return render_template("index.html", message=message)
+        if not name or not mail or not pw or not check_pw:
+            message = 'The input box should not be blank'
+            return render_template("index.html", message=message)
         return 'You pressed the submit button!'
 
 

@@ -7,8 +7,8 @@
   <link rel="stylesheet" href="{{ url_for('static', filename = 'hello.css') }}">
 </head>
 <body>
-	{% if message != None %}
-		<p> You have to fill every input box! Please fill it again.</p>
+	{% if message %}
+		<p> {{ message }} </p>
 	{% else %}
 		<p>Welcome!</p>
 	{% endif %}

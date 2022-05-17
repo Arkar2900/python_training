@@ -3,6 +3,11 @@
   <title>login</title>
 </head>
 <body>
+  {% if error1 %}
+    {{ error1 }}
+  {% elif error2 %}
+    {{ error2 }}
+  {% endif %}
   <form method = "post" action = "http://127.0.0.1:5000/validate">
       <table>
           <tr><td>Email</td><td><input type = 'text' name = 'email'></td></tr>
