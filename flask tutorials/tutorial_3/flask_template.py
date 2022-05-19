@@ -15,13 +15,13 @@ def result():
     return render_template('result.html', result=result)
 
 
-@app.route("/")
+@app.route('/')
 def index():
     message = None
-    return render_template("index.html", message=message)
+    return render_template('index.html', message=message)
 
 
-@app.route("/press", methods=['POST', 'GET'])
+@app.route('/press', methods=['POST', 'GET'])
 def press():
     message = None
     if request.method == 'POST':
@@ -31,8 +31,12 @@ def press():
         check_pw = request.form['check_pw']
         if not name or not mail or not pw or not check_pw:
             message = 'The input box should not be blank'
-            return render_template("index.html", message=message)
-        return 'You pressed the submit button!'
+            return render_template('index.html', message=message)
+        if pw != check_pw:
+            message = 'The password and re-entered password should be same.\
+Please enter agian!'
+            return render_template('index.html', message=message)
+        return 'You pressed the submit button. It is successfully submitted!'
 
 
 if __name__ == '__main__':
