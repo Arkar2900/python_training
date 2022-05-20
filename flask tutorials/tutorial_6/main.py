@@ -17,7 +17,7 @@ class TodoDAO(object):
 
     def get(self, id):
         for model in self.todos:
-            if model['id'] == id:
+            if model['todo_id'] == id:
                 return model
         api.abort(404, "Todo {} doesn't exist".format(id))
 
@@ -27,10 +27,14 @@ class TodoDAO(object):
         self.todos.append(model)
         return model
 
-    def update(self, id, data): 
+    def update(self, id, data):
         model = self.get(id)
         model.update(data)
         return model
+
+
+DAO = TodoDAO()
+DAO.create('111', {'task': 'Build an API'})
 
 
 @api.route('/todo')
@@ -39,21 +43,27 @@ class Todo(Resource):
     @api.marshal_list_with(model)
     def get(self):
         '''List all tasks'''
-        return TodoDAO().todos
+        return DAO.todos
 
 
 @api.route('/todo/<string:id>')
 class Todo_1(Resource):
-    @api.expect(model)
+    '''Show a single todo item and lets you delete them'''
     @api.marshal_with(model)
-    def post(self, id):
-        return TodoDAO().create(id, api.payload)
+    def get(self, id):
+        '''Fetch a given resource'''
+        return DAO.get(id)
 
     @api.expect(model)
     @api.marshal_with(model)
+    def post(self, id):
+        return DAO.create(id, api.payload)
+
+    @api.expect(model)
+    @api.marshal_with(model, code=201)
     def put(self, id):
         '''Update a task given its identifier'''
-        return TodoDAO().update(id, api.payload)
+        return DAO.update(id, api.payload)
 
 
 if __name__ == '__main__':
