@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request
+from flask import Flask, flash, render_template, request
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired, Email
+from wtforms.widgets import PasswordInput
 import os
 import pymysql
 from flask_bcrypt import Bcrypt
@@ -20,7 +21,7 @@ app.config['SECRET_KEY'] = SECRET_KEY
 
 class loginForm(FlaskForm):
     email = StringField('Email', validators=[Email(), DataRequired()])
-    password = StringField('Password', validators=[DataRequired()])
+    password = StringField('Password', widget=PasswordInput(hide_value=True))
     submit = SubmitField('Submit')
 
 
@@ -31,14 +32,35 @@ def login():
 
 @app.route('/submitted', methods=['POST', 'GET'])
 def submit():
-    if request.method == 'POST':
-        form = loginForm()
-        email = form.email.data
-        password = form.password.data
-        form.email.data = ''
-        form.password.data = ''
-        return render_template('submit.html', email=email,
-                               password=password, form=form)
+    try:
+        if request.method == 'POST':
+            form = loginForm()
+            email = form.email.data
+            password = form.password.data
+            form.email.data = ''
+            form.password.data = ''
+            #hash_password = generate_password_hash(password)
+            conn = mysql.connect()
+            cursor = conn.cursor(pymysql.cursors.DictCursor)
+            cursor.execute("SELECT email, password, type FROM bulletinboard")
+            rows = cursor.fetchall()
+            resp = jsonify(rows)
+            for row in rows:
+                db_hash_password = row['password']
+                print(row['email'], row['password'])
+                if row['email'] == email and db_hash_password == password:
+                    print('it is same')
+                    type = row['type']
+                    print(type)
+                    return render_template('dashboard.html', type=type)
+            resp.status_code = 200
+            flash('Invalid Credentials!')
+            return render_template('login.html', form=form)
+    except Exception as e:
+        print(e)
+    finally:
+        cursor.close()
+        conn.close()
 
 
 @app.route('/add')

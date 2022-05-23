@@ -4,13 +4,16 @@
  
   <h1>SCM Bulletin Board </h1>
   <h2>Login Form</h2>
+  {% with message = get_flashed_messages() %}
+    {{ message }}
+  {% endwith %}
     <form method="POST" action="/submitted">
         {{ form.hidden_tag() }}
         {{ form.email.label }}
         {{ form.email }}
         <br>
         {{ form.password.label }}
-        {{ form.password }}
+        {{ form.password(type=password) }}
         <br>
         {{ form.submit() }}
     </form>
