@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+ 
+{% block y %}
+ 
+  <h1>SCM Bulletin Board </h1>
+  <h2>Login Form</h2>
+    <form method="POST" action="/submitted">
+        {{ form.hidden_tag() }}
+        {{ form.email.label }}
+        {{ form.email }}
+        <br>
+        {{ form.password.label }}
+        {{ form.password }}
+        <br>
+        {{ form.submit() }}
+    </form>
+  
+ 
+{% endblock %}
