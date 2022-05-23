@@ -45,9 +45,10 @@ def submit():
 def add_user():
     try:
         #_json = request.json
-        _name = 'john'
-        _email = 'john@gmail.com'
-        _password = 'John321'
+        _name = 'kane'
+        _email = 'kane@gmail.com'
+        _password = 'kane432'
+        _id = 4
         # validate the received values
         if True:
             # do not save password as a plain text
@@ -55,19 +56,39 @@ def add_user():
             # save edits
             #sql = "INSERT INTO tbl_user(user_name, user_email, user_password) VALUES(%s, %s, %s)"
             #data = (_name, _email, _hashed_password,)
-            sql = "INSERT INTO bulletinboard(`id`, `name`, `email`, `password`, `profile`, `type`, `phone`, `address`, `dob`, `created_user_id`, `updated_user_id`, `delected_user_id`, `created_at`, `updated_at`, `deleted_at`) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            sql = "INSERT INTO bulletinboard(`id`, `name`, `email`, `password`, `profile`, `type`, `phone`, `address`, `dob`, `create_user_id`, `updated_user_id`, `deleted_user_id`, `created_at`, `updated_at`, `deleted_at`) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
             #data = (_name, _email, _hashed_password,)
-            data = ('3', _name, _email, _hashed_password, 'de4', '0', '09234551', 'ygn', '2001-09-24', '3', '4', '5', '2011-03-02', '2022-01-01', '2022-02-09')
+            data = (_id, _name, _email, _hashed_password, 'de4', '0', '09234551', 'ygn', '2001-09-24', 3, 4, 5, '2011-03-02', '2022-01-01', '2022-02-09')
+            print(data)
             conn = mysql.connect()
             cursor = conn.cursor()
             cursor.execute(sql, data)
             conn.commit()
             resp = jsonify('User added successfully!')
             resp.status_code = 200
-            
             return resp
         else:
             return not_found()
+    except Exception as e:
+        print(e)
+    finally:
+        cursor.close()
+        conn.close()
+
+
+@app.route('/email')
+def email():
+    try:
+        conn = mysql.connect()
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
+        cursor.execute("SELECT email FROM bulletinboard")
+        rows = cursor.fetchall()
+        resp = jsonify(rows)
+        for row in rows:
+            print(row["email"])
+        print(rows)
+        resp.status_code = 200
+        return jsonify(rows)
     except Exception as e:
         print(e)
     finally:
@@ -84,6 +105,7 @@ def users():
             password FROM bulletinboard")
         rows = cursor.fetchall()
         resp = jsonify(rows)
+        print(rows)
         resp.status_code = 200
         return jsonify(rows)
     except Exception as e:
@@ -117,17 +139,18 @@ def update_user():
     try:
         #_json = request.json
         _id = 2
+        _type = 0
         _name = 'Kevin'
         _email = 'kevin@gmail.com'
-        _password = 'kev123'
+        _password = 'kev876'
         # validate the received values
         if _name and _email and _password and _id:
             # do not save password as a plain text
             _hashed_password = generate_password_hash(_password)
             # save edits
             sql = "UPDATE bulletinboard SET name=%s, email=%s, \
-                password=%s WHERE id=%s"
-            data = (_name, _email, _hashed_password, _id,)
+                password=%s, type=%s WHERE id=%s"
+            data = (_name, _email, _hashed_password, _type, _id,)
             conn = mysql.connect()
             cursor = conn.cursor()
             cursor.execute(sql, data)
@@ -144,12 +167,12 @@ def update_user():
         conn.close()
 
 
-@app.route('/delete/<int:id>', methods=['DELETE'])
+@app.route('/delete/<int:id>')
 def delete_user(id):
     try:
         conn = mysql.connect()
         cursor = conn.cursor()
-        cursor.execute("DELETE FROM tbl_user WHERE user_id=%s", (id,))
+        cursor.execute("DELETE FROM bulletinboard WHERE id={}".format(id))
         conn.commit()
         resp = jsonify('User deleted successfully!')
         resp.status_code = 200
