@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+ 
+{% block y %}
+ 
+  <a href="/"> Login Form </a>
+  <br><br>
+  <a href="#"> Post List </a>
+  <br>
+  <a href="#"> User List </a>
+  <br><br><br>
+  {% if type == 0 %}
+    <!--<a href="{{ url_for('post_cre_user')}}"> Post Create For User </a>-->
+    <a href="#"> Post Create For User </a>
+    
+    <br><br><br>
+    <!--<a href="{{ url_for('post_cre_confirm')}}"> Post Create Confirm</a>-->
+    <a href="#"> Post Create Confirm</a>
+    
+    <br><br><br>
+    <!--<a href="{{ url_for('post_update_user')}}"> Post Update User </a>
+    <a href="{{ url_for('user_update_user')}}"> User Update User</a>-->
+    <a href="#"> Post Update User </a><br>
+    <a href="#"> User Update User</a>
+    <br><br><br>
+    <!--<a href="{{ url_for('post_update_confirm')}}"> Post Update Confirm</a>
+    <a href="{{ url_for('user_update_confirm')}}"> User Update Confirm</a>-->
+    <a href="#"> Post Update Confirm</a><br>
+    <a href="#"> User Update Confirm</a>
+    <br><br><br>
+    <!--<a href="{{ url_for('csv_upload')}}"> CSV Upload</a>-->
+    <a href="#"> CSV Upload</a>
+
+
+  {%else %}
+
+    <!--<a href="{{ url_for('post_cre_admin')}}"> Post create For Admin</a><br>
+    <a href="{{ url_for('user_cre_admin')}}"> User Create For Admin</a>-->
+    <a href="#"> Post create For Admin</a><br>
+    <a href="#"> User Create For Admin</a>
+    <br><br><br>
+    <!--<a href="{{ url_for('post_cre_confirm')}}"> Post Create Confirm</a><br>
+    <a href="{{ url_for('user_cre_confirm')}}"> User Create Confirm</a>-->
+    <a href="#"> Post Create Confirm</a><br>
+    <a href="#"> User Create Confirm</a>
+    <br><br><br>
+    <!--<a href="{{ url_for('post_update_admin')}}"> Post Update Admin</a><br>
+    <a href="{{ url_for('user_update_admin')}}"> User Update Admin</a>-->
+    <a href="#"> Post Update Admin</a><br>
+    <a href="#"> User Update Admin</a>
+    <br><br><br>
+    <!--<a href="{{ url_for('post_update_confirm')}}"> Post Update Confirm</a><br>
+    <a href="{{ url_for('user_update_confirm')}}"> User Update Confirm</a>-->
+    <a href="#"> Post Update Confirm</a><br>
+    <a href="#"> User Update Confirm</a>
+    <br><br><br>
+    <!--<a href="{{ url_for('csv_upload')}}"> CSV Upload</a>-->
+    <a href="#"> CSV Upload</a>
+  {% endif %}
+    
+  
+ 
+{% endblock %}

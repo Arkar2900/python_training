@@ -1,0 +1,70 @@
+{% extends "layout.html" %}
+ 
+{% block y %}
+ 
+  <div class="wrapper">
+    {% if type == '0' %}
+      <h2>User</h2>
+    {% else %}
+      <h2>Admin</h2>
+    {% endif %}
+    <div class="blk">
+      <a href="/" class="btn_dash"> Login Form </a>
+    </div>
+    <div class="blk">
+      <a href="#" class="btn_dash"> Post List </a>
+      <a href="#" class="btn_dash"> User List </a>
+    </div>
+    {% if type == '0' %}
+      
+      <div class="blk">
+        <a href="#" class="btn_dash"> Post Create For User </a>
+      </div>
+  
+      <div class="blk">
+        <a href="#" class="btn_dash"> Post Create Confirm</a>
+      </div>
+      
+      <div class="blk">
+        <a href="#" class="btn_dash"> Post Update User </a><br>
+        <a href="#" class="btn_dash"> User Update User</a>
+      </div>
+      
+      <div class="blk">
+        <a href="#" class="btn_dash"> Post Update Confirm</a><br>
+        <a href="#" class="btn_dash"> User Update Confirm</a>
+      </div>
+      
+      <div class="blk">
+        <a href="#" class="btn_dash"> CSV Upload</a>
+      </div>
+  
+  
+    {%else %}
+  
+      <div class="blk">
+        <a href="#" class="btn_dash"> Post Create For Admin </a>
+        <a href="#" class="btn_dash"> User Create For Admin </a>
+      </div>
+      
+      <div class="blk">
+        <a href="#" class="btn_dash"> Post Create Confirm </a>
+        <a href="#" class="btn_dash"> User Create Confirm </a>
+      </div>
+      
+      <div class="blk">
+        <a href="#" class="btn_dash"> Post Update Admin </a>
+        <a href="#" class="btn_dash"> User Update Admin </a>
+      </div>
+      
+      <div class="blk">
+        <a href="#" class="btn_dash"> Post Update Confirm </a>
+        <a href="#" class="btn_dash"> User Update Confirm </a>
+      </div>
+      
+      <div class="blk">
+        <a href="#" class="btn_dash"> CSV Upload</a>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

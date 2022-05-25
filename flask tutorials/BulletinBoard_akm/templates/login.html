@@ -4,19 +4,25 @@
  
   <h1>SCM Bulletin Board </h1>
   <h2>Login Form</h2>
-  {% with message = get_flashed_messages() %}
-    {{ message }}
-  {% endwith %}
     <form method="POST" action="/submitted">
         {{ form.hidden_tag() }}
         {{ form.email.label }}
-        {{ form.email }}
-        <br>
+        {{ form.email(type='text', class='form_input')}}
+        <br><br>
         {{ form.password.label }}
-        {{ form.password(type=password) }}
-        <br>
-        {{ form.submit() }}
+        {{ form.password(type='password', class='form_input')}}
+        <br><br>
+        {{ form.submit(class='btn_dash btn_login') }}
     </form>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <ul class=flashes>
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+          </ul>
+        {% endif %}
+      {% endwith %}
   
  
 {% endblock %}

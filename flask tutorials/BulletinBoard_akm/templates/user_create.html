@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+ 
+{% block y %}
+ 
+  <h1>SCM Bulletin Board </h1>
+  <h2>Create User</h2>
+    <form method="POST" action='/user_create_page'>
+        {{ form.hidden_tag() }}
+        {{ form.name.label }}
+        {{ form.name}}
+        <br><br>
+        {{ form.email.label }}
+        {{ form.email}}
+        <br><br>
+        {{ form.password.label }}
+        {{ form.password}}
+        <br><br>
+        {{ form.confirm_password.label }}
+        {{ form.confirm_password}}
+        <br><br>
+        {{ form.type.label }}
+        {{ form.type}}
+        <br><br>
+        {{ form.phone.label }}
+        {{ form.phone}}
+        <br><br>
+        {{ form.date.label }}
+        {{ form.date}}
+        <br><br>
+        {{ form.address.label }}
+        {{ form.address}}
+        <br><br>
+        {{ form.profile.label }}
+        {{ form.profile}}
+        <br><br>
+        {{ form.confirm_btn}}
+        <br>
+        {{ form.clear_btn }}
+    </form>
+{% endblock %}

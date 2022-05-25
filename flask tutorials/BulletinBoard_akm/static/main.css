@@ -1,0 +1,34 @@
+.wrapper{
+  margin-top: 40px;
+}
+.form_input{
+  width: 60%;
+  margin-right: 30%;
+  float: right;
+}
+.btn_login{
+  padding: 5px 10px !important;
+  border: none;
+  margin-left: 30%;
+  background-color: rgb(67, 128, 179) !important;
+  color: white !important;
+}
+.flashes li{
+  color: #ff0000;
+  list-style-type: none;
+}
+.btn_dash{
+  background-color: #d4e725;
+  color: #302d2bf6;
+  padding: 12px 15px;
+  text-align: center;
+  text-decoration: none;
+  display: block;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+.blk{
+  float: left;
+  margin-left: 20px;
+  
+}

@@ -1,15 +1,13 @@
+from django.shortcuts import redirect
 from flask import Flask, flash, render_template, request
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
-from wtforms.validators import DataRequired, Email
-from wtforms.widgets import PasswordInput
+from wtforms import StringField, SubmitField, PasswordField, DateField, TextAreaField, FileField
 import os
 import pymysql
 from flask_bcrypt import Bcrypt
 from db import mysql
 from flask import jsonify
 from app import app
-from werkzeug.security import generate_password_hash
 
 
 bcrypt = Bcrypt(app)
@@ -20,9 +18,9 @@ app.config['SECRET_KEY'] = SECRET_KEY
 
 
 class loginForm(FlaskForm):
-    email = StringField('Email', validators=[Email(), DataRequired()])
-    password = StringField('Password', widget=PasswordInput(hide_value=True))
-    submit = SubmitField('Submit')
+    email = StringField('Email')
+    password = PasswordField('Password')
+    submit = SubmitField('Login')
 
 
 @app.route('/')
@@ -36,25 +34,31 @@ def submit():
         if request.method == 'POST':
             form = loginForm()
             email = form.email.data
-            password = form.password.data
+            _password = form.password.data
             form.email.data = ''
             form.password.data = ''
-            #hash_password = generate_password_hash(password)
             conn = mysql.connect()
             cursor = conn.cursor(pymysql.cursors.DictCursor)
-            cursor.execute("SELECT email, password, type FROM bulletinboard")
+            cursor.execute("SELECT email, password, type FROM user_table")
             rows = cursor.fetchall()
             resp = jsonify(rows)
+            if not email:
+                flash('*Email Address is required.')
+            if '@' not in email:
+                flash('*Should be Email Address.')
+            if not _password:
+                flash('*Password is required.')
             for row in rows:
                 db_hash_password = row['password']
-                print(row['email'], row['password'])
-                if row['email'] == email and db_hash_password == password:
+                print('hash_db_pw is {}'.format(db_hash_password))
+                if row['email'] == email and bcrypt.check_password_hash(db_hash_password, _password):
                     print('it is same')
                     type = row['type']
                     print(type)
                     return render_template('dashboard.html', type=type)
             resp.status_code = 200
-            flash('Invalid Credentials!')
+            if email and _password:
+                flash('*Incorrect Email or Passowrd.')
             return render_template('login.html', form=form)
     except Exception as e:
         print(e)
@@ -67,18 +71,22 @@ def submit():
 def add_user():
     try:
         #_json = request.json
-        _name = 'kane'
-        _email = 'kane@gmail.com'
-        _password = 'kane432'
-        _id = 4
+        #_name = 'admin'
+        #_email = 'admin@gmail.com'
+        #_password = 'admin123'
+        #_id = 1
+        _name = 'jame'
+        _email = 'jamen@gmail.com'
+        _password = 'jame123'
+        _id = 2
         # validate the received values
         if True:
             # do not save password as a plain text
-            _hashed_password = generate_password_hash(_password)
+            _hashed_password = bcrypt.generate_password_hash(_password)
             # save edits
             #sql = "INSERT INTO tbl_user(user_name, user_email, user_password) VALUES(%s, %s, %s)"
             #data = (_name, _email, _hashed_password,)
-            sql = "INSERT INTO bulletinboard(`id`, `name`, `email`, `password`, `profile`, `type`, `phone`, `address`, `dob`, `create_user_id`, `updated_user_id`, `deleted_user_id`, `created_at`, `updated_at`, `deleted_at`) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            sql = "INSERT INTO user_table(`id`, `name`, `email`, `password`, `profile`, `type`, `phone`, `address`, `dob`, `create_user_id`, `updated_user_id`, `deleted_user_id`, `created_at`, `updated_at`, `deleted_at`) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
             #data = (_name, _email, _hashed_password,)
             data = (_id, _name, _email, _hashed_password, 'de4', '0', '09234551', 'ygn', '2001-09-24', 3, 4, 5, '2011-03-02', '2022-01-01', '2022-02-09')
             print(data)
@@ -103,7 +111,7 @@ def email():
     try:
         conn = mysql.connect()
         cursor = conn.cursor(pymysql.cursors.DictCursor)
-        cursor.execute("SELECT email FROM bulletinboard")
+        cursor.execute("SELECT email FROM user_table")
         rows = cursor.fetchall()
         resp = jsonify(rows)
         for row in rows:
@@ -124,7 +132,7 @@ def users():
         conn = mysql.connect()
         cursor = conn.cursor(pymysql.cursors.DictCursor)
         cursor.execute("SELECT id, name, email, \
-            password FROM bulletinboard")
+            password FROM user_table")
         rows = cursor.fetchall()
         resp = jsonify(rows)
         print(rows)
@@ -144,7 +152,7 @@ def user(id):
         conn = mysql.connect()
         cursor = conn.cursor(pymysql.cursors.DictCursor)
         cursor.execute("SELECT id, name, email, \
-            password FROM bulletinboard WHERE id={}".format(id))
+            password FROM user_table WHERE id={}".format(id))
         rows = cursor.fetchall()
         resp = jsonify(rows)
         resp.status_code = 200
@@ -160,19 +168,18 @@ def user(id):
 def update_user():
     try:
         #_json = request.json
-        _id = 2
-        _type = 0
-        _name = 'Kevin'
-        _email = 'kevin@gmail.com'
-        _password = 'kev876'
+        _id = 1
+        _type = '1'
+        #_name = 'Kevin'
+        #_email = 'kevin@gmail.com'
+        #_password = 'kev876'
         # validate the received values
-        if _name and _email and _password and _id:
+        if _id:
             # do not save password as a plain text
-            _hashed_password = generate_password_hash(_password)
+            #_hashed_password = generate_password_hash(_password)
             # save edits
-            sql = "UPDATE bulletinboard SET name=%s, email=%s, \
-                password=%s, type=%s WHERE id=%s"
-            data = (_name, _email, _hashed_password, _type, _id,)
+            sql = "UPDATE user_table SET type=%s WHERE id=%s"
+            data = (_type, _id,)
             conn = mysql.connect()
             cursor = conn.cursor()
             cursor.execute(sql, data)
@@ -194,7 +201,7 @@ def delete_user(id):
     try:
         conn = mysql.connect()
         cursor = conn.cursor()
-        cursor.execute("DELETE FROM bulletinboard WHERE id={}".format(id))
+        cursor.execute("DELETE FROM user_table WHERE id={}".format(id))
         conn.commit()
         resp = jsonify('User deleted successfully!')
         resp.status_code = 200
@@ -204,6 +211,71 @@ def delete_user(id):
     finally:
         cursor.close()
         conn.close()
+
+
+class userForm(FlaskForm):
+    name = StringField('Name')
+    email = StringField('Email Address')
+    password = PasswordField('Password')
+    confirm_password = PasswordField('Confirm Password')
+    type = StringField('Type')
+    phone = StringField('Phone')
+    date = DateField('Date Of Birth')
+    address = TextAreaField('Address')
+    profile = FileField('Profile')
+    confirm_btn = SubmitField('Confirm')
+    clear_btn = SubmitField('Clear')
+    create_btn = SubmitField('Create')
+    cancel_btn = SubmitField('Cancel')
+
+
+@app.route('/add_user')
+def new_user():
+    return render_template('user_create.html', form=userForm())
+
+
+@app.route('/user_create_page', methods=['POST', 'GET'])
+def user_create_page():
+    try:
+        form = userForm()
+        if form:
+            print('there is form')
+        if request.method == 'POST':
+            print('This is Post method')
+        if request.method == 'POST' and form.validate_on_submit() and form.confirm_btn.data:
+            print('It pass!')
+            _user_name = form.name.data
+            _user_email = form.email.data
+            _user_password = form.password.data
+            _confirm_password = form.confirm_password.data
+            _type = form.type.data
+            _phone = form.phone.data
+            _date = form.date.data
+            _address = form.address.data
+            _profile = form.profile.data
+            print(_user_name)
+            return render_template('show_form.html', _user_name=_user_name,
+                                   _user_email=_user_email,
+                                   _user_password=_user_password,
+                                   _confirm_password=_confirm_password,
+                                   _type=_type,
+                                   _phone=_phone, _date=_date,
+                                   _address=_address, _profile=_profile,
+                                   form=userForm())
+        elif request.method == 'POST' and form.validate_on_submit() and form.clear_btn.data:
+            form.name.data = ''
+            form.email.data = ''
+            form.password.data = ''
+            form.confirm_password.data = ''
+            form.type.data = ''
+            form.phone.data = ''
+            form.date.data = ''
+            form.address.data = ''
+            form.profile.data = ''
+            return render_template('show_form.html', form=userForm())
+        return render_template('user_create.html', form=userForm())
+    except Exception as e:
+        print(e)
 
 
 @app.errorhandler(404)
