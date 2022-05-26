@@ -10,7 +10,7 @@
   padding: 5px 10px !important;
   border: none;
   margin-left: 30%;
-  background-color: rgb(67, 128, 179) !important;
+  background-color: #4380b3 !important;
   color: white !important;
 }
 .flashes li{
@@ -31,4 +31,73 @@
   float: left;
   margin-left: 20px;
   
+}
+.main_blk{
+  float: left;
+  width: 35%;
+}
+.main_blk p{
+  /*display: inline-block;*/
+  float: right;
+  margin: 0 20px 0 0;
+  
+}
+.main_btn{
+  margin-top: 20px;
+  margin-left: 20px;
+  background-color: #4380b3;
+  color: #fff;
+  padding: 10px 12px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  border-radius: 10px;
+  border: none;
+}
+.req_message{
+  float: left !important;
+  color: red;
+
+}
+.create_wrapper{
+  width: 100%;
+}
+nav{
+  width: 90%;
+  margin: 10px 0;
+  display: inline-block;
+}
+.left_nav{
+  float: left;
+  width: 35%;
+}
+.right_nav{
+  float: right;
+  width: 200px;
+  width: 35%;
+}
+.user_list, .post_list, .logo, .login_user, .logout{
+  float: left;
+}
+.login_user{
+  background-color: #4380b3;
+  color: #fff;
+  padding: 8px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: block;
+  border-radius: 10px;
+  /*margin-bottom: 10px;*/
+  margin-top: 10px;
+}
+nav a{
+  background-color: #d4e725;
+  color: #302d2bf6;
+  padding: 8px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: block;
+  border-radius: 10px;
+  /*margin-bottom: 10px;*/
+  margin: 12px 0 0px 15px;
 }

@@ -4,7 +4,8 @@
  
   <h1>SCM Bulletin Board </h1>
   <h2>Create User</h2>
-    <form method="POST">
+    <div class="left_blk">
+      <form method="POST">
         {{ form.hidden_tag() }}
         {{ form.name.label }}
         {{ _user_name}}
@@ -37,4 +38,5 @@
         <br>
         {{ form.cancel_btn }}
     </form>
+    </div>
 {% endblock %}
