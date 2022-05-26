@@ -8,6 +8,8 @@ from flask_bcrypt import Bcrypt
 from db import mysql
 from flask import jsonify
 from app import app
+from datetime import datetime
+
 
 
 bcrypt = Bcrypt(app)
@@ -61,6 +63,7 @@ def submit():
                     type = row['type']
                     print(type)
                     session['name'] = row['name']
+                    session['id'] = row['id']
                     current_name = session.get('name')
                     print("you save the current name in session {}".format(current_name))
                     return render_template('dashboard.html', type=type)
@@ -75,45 +78,45 @@ def submit():
         conn.close()
 
 
-#@app.route('/add')
-#def add_user():
-#    try:
-#        #_json = request.json
-#        #_name = 'admin'
-#        #_email = 'admin@gmail.com'
-#        #_password = 'admin123'
-#        #_id = 1
-#        _name = 'jame'
-#        _email = 'jamen@gmail.com'
-#        _password = 'jame123'
-#        _id = 2
-#        # validate the received values
-#        if True:
-#            # do not save password as a plain text
-#            _hashed_password = bcrypt.generate_password_hash(_password)
-#            # save edits
-#            #sql = "INSERT INTO tbl_user(user_name, user_email, user_password) VALUES(%s, %s, %s)"
-#            #data = (_name, _email, _hashed_password,)
-#            sql = "INSERT INTO user_table(`id`, `name`, `email`, `password`, `profile`, `type`, `phone`, `address`, `dob`, `create_user_id`, `updated_user_id`, `deleted_user_id`, `created_at`, `updated_at`, `deleted_at`) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-#            #data = (_name, _email, _hashed_password,)
-#            data = (_id, _name, _email, _hashed_password, 'de4', '0', '09234551', 'ygn', '2001-09-24', 3, 4, 5, '2011-03-02', '2022-01-01', '2022-02-09')
-#            print(data)
-#            conn = mysql.connect()
-#            cursor = conn.cursor()
-#            cursor.execute(sql, data)
-#            conn.commit()
-#            resp = jsonify('User added successfully!')
-#            resp.status_code = 200
-#            return resp
-#        else:
-#            return not_found()
-#    except Exception as e:
-#        print(e)
-#    finally:
-#        cursor.close()
-#        conn.close()
-#
-#
+@app.route('/add')
+def add_user():
+    try:
+        #_json = request.json
+        #_name = 'admin'
+        #_email = 'admin@gmail.com'
+        #_password = 'admin123'
+        #_id = 1
+        _name = 'jame'
+        _email = 'jamen@gmail.com'
+        _password = 'jame123'
+        _id = 2
+        # validate the received values
+        if True:
+            # do not save password as a plain text
+            _hashed_password = bcrypt.generate_password_hash(_password)
+            # save edits
+            #sql = "INSERT INTO tbl_user(user_name, user_email, user_password) VALUES(%s, %s, %s)"
+            #data = (_name, _email, _hashed_password,)
+            sql = "INSERT INTO user_table(`id`, `name`, `email`, `password`, `profile`, `type`, `phone`, `address`, `dob`, `create_user_id`, `updated_user_id`, `deleted_user_id`, `created_at`, `updated_at`, `deleted_at`) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            #data = (_name, _email, _hashed_password,)
+            data = (_id, _name, _email, _hashed_password, 'de4', '0', '09234551', 'ygn', '2001-09-24', 3, 4, 5, '2011-03-02', '2022-01-01', '2022-02-09')
+            print(data)
+            conn = mysql.connect()
+            cursor = conn.cursor()
+            cursor.execute(sql, data)
+            conn.commit()
+            resp = jsonify('User added successfully!')
+            resp.status_code = 200
+            return resp
+        else:
+            return not_found()
+    except Exception as e:
+        print(e)
+    finally:
+        cursor.close()
+        conn.close()
+
+
 #@app.route('/email')
 #def email():
 #    try:
@@ -247,6 +250,7 @@ def user_create_page():
            form.confirm_btn.data:
             print('It pass!')
             _user_name = form.name.data
+            
             _user_email = form.email.data
             _user_password = form.password.data
             _confirm_password = form.confirm_password.data
@@ -297,14 +301,15 @@ must be same.'
                 password_format_error = '*Password must be more than \
 8 characters long, must conatain 1 Uppercase and 1 Numeric.'
                 cannot_insert = True
-                print('pw is not in format')
-            if not _phone:
-                phone_error = '*Phone is required.'
+            _user_password_dots = len(_user_password) * '*'
+            min_num = '09200000000'
+            max_num = '09999999999'
+            if not _phone or not _phone.isdigit() or\
+               int(_phone) < int(min_num) or int(_phone) > int(max_num):
+                phone_error = '*Phone is required.It needs to be\
+only number contains 11 digits. (09xxxxxxxxx)!'
                 cannot_insert = True
-                print('req phone')
             if cannot_insert:
-                print('Cannot Insert to the form!!!')
-                print(current_name)
                 return render_template(
                     'user_create.html', name_error=name_error,
                     email_requ_error=email_requ_error,
@@ -313,31 +318,87 @@ must be same.'
                     password_format_error=password_format_error,
                     phone_error=phone_error, form=userForm(),
                     current_name=current_name)
+            if _type == '0':
+                _for_user_type = 'User'
+            else:
+                _for_user_type = 'Admin'
+            #my_file = _profile
+            #print(my_file)
+            #path = os.getcwd()
+            #folder_name = r'\temporary'
+            #folder_to_save_files = path + folder_name
+            #if not os.path.exists(folder_to_save_files):
+            #    os.mkdir(folder_to_save_files)
+            #print(folder_to_save_files)
+            #my_file.save(os.path.join(folder_to_save_files, my_file.filename))
+            #print(folder_to_save_files)
+            #_temp_profile = url_for('temporary', filename=_profile)
+            #print(_temp_profile)
             return render_template('show_form.html', _user_name=_user_name,
                                    _user_email=_user_email,
-                                   _user_password=_user_password,
+                                   _user_password=_user_password_dots,
                                    _confirm_password=_confirm_password,
-                                   _type=_type,
+                                   _type=_for_user_type,
                                    _phone=_phone, _date=_date,
                                    _address=_address, _profile=_profile,
                                    form=userForm())
         elif (request.method == 'POST' and
               form.clear_btn.data):
-            form.name.data = ''
-            form.email.data = ''
-            form.password.data = ''
-            form.confirm_password.data = ''
-            form.type.data = ''
-            form.phone.data = ''
-            form.date.data = ''
-            form.address.data = ''
-            form.profile.data = ''
+            form.name.data = ""
+            form.email.data = ""
+            form.password.data = ""
+            form.confirm_password.data = ""
+            form.type.data = ""
+            form.phone.data = ""
+            form.date.data = ""
+            form.address.data = ""
+            form.profile.data = ""
+            print("Clear btn")
+            print(form.name.data)
             return render_template(
                     'user_create.html',
-                    form=userForm(),
+                    form=form,
                     current_name=current_name)
-        print("this is start")
-        print(form.type)
+        #print('{} THis is the email'.format(_user_email))
+        if request.method == 'POST' and form.create_btn.data:
+            print('pressed Create ')
+            conn = mysql.connect()
+            cursor = conn.cursor(pymysql.cursors.DictCursor)
+            cursor.execute("SELECT id, name, email, password, type FROM user_table")
+            rows = cursor.fetchall()
+            email_exist_error = None
+            for row in rows:
+                print(_user_email)
+                print("Email check point")
+                if _user_email == row['email']:
+                    email_exist_error = 'User with this email exist'
+                    return render_template('user_create.html',
+                                           form=userForm(),
+                                           email_exist_error=email_exist_error,
+                                           current_name=current_name)
+            print("Email passed")
+            now = datetime.now()
+            current_time = now.strftime("%Y-%m-%d|%H:%M:%S")
+            _id = '{}'.format(len(rows)+1)
+            _hashed_password = bcrypt.generate_password_hash(_user_password)
+            _profile = 'rre21'
+            _create_user_id = session.get('id')
+            _update_user_id = session.get('id')
+            _create_at = current_time
+            _update_at = current_time
+            sql = "INSERT INTO user_table(`id`, `name`, `email`, `password`,\
+                `profile`, `type`, `phone`, `address`, `dob`, \
+                    `create_user_id`, `updated_user_id`, `deleted_user_id`,\
+                        `created_at`, `updated_at`,\
+                            `deleted_at`) VALUES(%s, %s, %s, %s,\
+                                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            data = (_id, _user_name, _user_email, _hashed_password, _profile,
+                    _type, _phone, _address, _date, _create_user_id,
+                    _update_user_id, '', _create_at, _update_at, '')
+            print(data)
+            cursor.execute(sql, data)
+            conn.commit()
+            return " add to db done"
         return render_template('user_create.html', form=userForm(),
                                current_name=current_name)
     except Exception as e:

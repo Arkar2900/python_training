@@ -8,35 +8,33 @@
       <form method="POST">
         {{ form.hidden_tag() }}
         {{ form.name.label }}
-        {{ _user_name}}
+        <p>{{ _user_name}}</p>
         <br><br>
         {{ form.email.label }}
-        {{ _user_email}}
+        <p>{{ _user_email}}</p>
         <br><br>
         {{ form.password.label }}
-        {{ _user_password}}
-        <br><br>
-        {{ form.confirm_password.label }}
-        {{ _confirm_password}}
+        <p>{{ _user_password}}</p>
         <br><br>
         {{ form.type.label }}
-        {{ _type}}
+        <p>{{ _type}}</p>
         <br><br>
         {{ form.phone.label }}
-        {{ _phone}}
+        <p>{{ _phone}}</p>
         <br><br>
         {{ form.date.label }}
-        {{ _date}}
+        <p>{{ _date}}</p>
         <br><br>
         {{ form.address.label }}
-        {{ _address}}
+        <p>{{ _address}}</p>
         <br><br>
         {{ form.profile.label }}
-        {{ _profile}}
+        <p>{{ _profile}}</p>
+        <img src="_profile" alt="User profile">
         <br><br>
-        {{ form.create_btn}}
+        {{ form.create_btn(class='main_btn')}}
         <br>
-        {{ form.cancel_btn }}
+        {{ form.cancel_btn(class='main_btn') }}
     </form>
     </div>
 {% endblock %}
