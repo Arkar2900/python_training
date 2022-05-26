@@ -63,9 +63,10 @@
   width: 100%;
 }
 nav{
-  width: 90%;
+  width: 100%;
   margin: 10px 0;
   display: inline-block;
+  background-color: #dddddd;
 }
 .left_nav{
   float: left;
@@ -80,24 +81,24 @@ nav{
   float: left;
 }
 .login_user{
-  background-color: #4380b3;
-  color: #fff;
-  padding: 8px 10px;
-  text-align: center;
-  text-decoration: none;
-  display: block;
-  border-radius: 10px;
-  /*margin-bottom: 10px;*/
-  margin-top: 10px;
+  background-color: #c2c2c2;
+    color: #000;
+    padding: 6px 60px;
+    text-align: center;
+    text-decoration: none;
+    display: block;
+    border-radius: 10px;
+    /* margin-bottom: 10px; */
+    margin-top: 10px;
 }
 nav a{
-  background-color: #d4e725;
+  background-color: #fff;
   color: #302d2bf6;
   padding: 8px 10px;
   text-align: center;
   text-decoration: none;
   display: block;
-  border-radius: 10px;
+  border-radius: 8px;
   /*margin-bottom: 10px;*/
   margin: 12px 0 0px 15px;
 }
@@ -108,4 +109,19 @@ nav a{
 .left_blk p{
   float: right;
   margin: 0;
+}
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
 }

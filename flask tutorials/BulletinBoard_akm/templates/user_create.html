@@ -6,16 +6,16 @@
     <nav>
       <div class="left_nav">
         <h2 class="logo">SCM Bulletin Board</h2>
-        <a href="#" class="user_list">Users</a>
+        <a href="/users" class="user_list">Users</a>
         <a href="#" class="post_list">Posts</a>
       </div>
       <div class="right_nav">
         <h2 class="login_user">{{ current_name }}</h2>
-        <a href="/" class="logout">logout</a>
+        <a href="/logout" class="logout">logout</a>
       </div>
-
     </nav>
     <div class="main_blk">
+      <input type="text">
       <form method="POST" action='/user_create_page'>
         {{ form.hidden_tag() }}
         {{ form.name.label }}
@@ -27,6 +27,9 @@
         <br><br>
         {{ form.email.label }}
         <p>{{ form.email}}</p>
+        {% if email_exist_error %}
+          <p class="req_message">{{ email_exist_error }}</p>
+        {% endif %}
         {% if email_requ_error %}
           <p class="req_message">{{ email_requ_error }}</p>
         {% endif %}

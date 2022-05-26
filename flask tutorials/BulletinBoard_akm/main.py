@@ -1,3 +1,4 @@
+from django.shortcuts import redirect
 from flask import Flask, flash, render_template, request, session
 from flask_session import Session
 from flask_wtf import FlaskForm
@@ -9,7 +10,7 @@ from db import mysql
 from flask import jsonify
 from app import app
 from datetime import datetime
-
+import dateutil.parser
 
 
 bcrypt = Bcrypt(app)
@@ -28,12 +29,21 @@ class loginForm(FlaskForm):
     submit = SubmitField('Login')
 
 # Home page/ login page
+
+
 @app.route('/')
 def login():
     return render_template('login.html', form=loginForm())
 
 
+@app.route('/logout')
+def logout():
+    session.clear()
+    return render_template('login.html', form=loginForm())
+
 # After pressing "login" button this API will work
+
+
 @app.route('/submitted', methods=['POST', 'GET'])
 def submit():
     try:
@@ -45,7 +55,8 @@ def submit():
             form.password.data = ''
             conn = mysql.connect()
             cursor = conn.cursor(pymysql.cursors.DictCursor)
-            cursor.execute("SELECT id, name, email, password, type FROM user_table")
+            cursor.execute("SELECT id, name, email, password,\
+                            type FROM user_table")
             rows = cursor.fetchall()
             resp = jsonify(rows)
             if not email:
@@ -64,8 +75,10 @@ def submit():
                     print(type)
                     session['name'] = row['name']
                     session['id'] = row['id']
+                    session['type'] = row['type']
                     current_name = session.get('name')
-                    print("you save the current name in session {}".format(current_name))
+                    print("you save the current name \
+in session {}".format(current_name))
                     return render_template('dashboard.html', type=type)
             resp.status_code = 200
             if email and _password:
@@ -78,47 +91,47 @@ def submit():
         conn.close()
 
 
-@app.route('/add')
-def add_user():
-    try:
-        #_json = request.json
-        #_name = 'admin'
-        #_email = 'admin@gmail.com'
-        #_password = 'admin123'
-        #_id = 1
-        _name = 'jame'
-        _email = 'jamen@gmail.com'
-        _password = 'jame123'
-        _id = 2
-        # validate the received values
-        if True:
-            # do not save password as a plain text
-            _hashed_password = bcrypt.generate_password_hash(_password)
-            # save edits
-            #sql = "INSERT INTO tbl_user(user_name, user_email, user_password) VALUES(%s, %s, %s)"
-            #data = (_name, _email, _hashed_password,)
-            sql = "INSERT INTO user_table(`id`, `name`, `email`, `password`, `profile`, `type`, `phone`, `address`, `dob`, `create_user_id`, `updated_user_id`, `deleted_user_id`, `created_at`, `updated_at`, `deleted_at`) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-            #data = (_name, _email, _hashed_password,)
-            data = (_id, _name, _email, _hashed_password, 'de4', '0', '09234551', 'ygn', '2001-09-24', 3, 4, 5, '2011-03-02', '2022-01-01', '2022-02-09')
-            print(data)
-            conn = mysql.connect()
-            cursor = conn.cursor()
-            cursor.execute(sql, data)
-            conn.commit()
-            resp = jsonify('User added successfully!')
-            resp.status_code = 200
-            return resp
-        else:
-            return not_found()
-    except Exception as e:
-        print(e)
-    finally:
-        cursor.close()
-        conn.close()
+# @app.route('/add')
+# def add_user():
+#    try:
+#        #_json = request.json
+#        #_name = 'admin'
+#        #_email = 'admin@gmail.com'
+#        #_password = 'admin123'
+#        #_id = 1
+#        _name = 'jame'
+#        _email = 'jamen@gmail.com'
+#        _password = 'jame123'
+#        _id = 2
+#        # validate the received values
+#        if True:
+#            # do not save password as a plain text
+#            _hashed_password = bcrypt.generate_password_hash(_password)
+#            # save edits
+#            #sql = "INSERT INTO tbl_user(user_name, user_email, user_password) VALUES(%s, %s, %s)"
+#            #data = (_name, _email, _hashed_password,)
+#            sql = "INSERT INTO user_table(`id`, `name`, `email`, `password`, `profile`, `type`, `phone`, `address`, `dob`, `create_user_id`, `updated_user_id`, `deleted_user_id`, `created_at`, `updated_at`, `deleted_at`) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+#            #data = (_name, _email, _hashed_password,)
+#            data = (_id, _name, _email, _hashed_password, 'de4', '0', '09234551', 'ygn', '2001-09-24', 3, 4, 5, '2011-03-02', '2022-01-01', '2022-02-09')
+#            print(data)
+#            conn = mysql.connect()
+#            cursor = conn.cursor()
+#            cursor.execute(sql, data)
+#            conn.commit()
+#            resp = jsonify('User added successfully!')
+#            resp.status_code = 200
+#            return resp
+#        else:
+#            return not_found()
+#    except Exception as e:
+#        print(e)
+#    finally:
+#        cursor.close()
+#        conn.close()
 
 
-#@app.route('/email')
-#def email():
+# @app.route('/email')
+# def email():
 #    try:
 #        conn = mysql.connect()
 #        cursor = conn.cursor(pymysql.cursors.DictCursor)
@@ -137,25 +150,28 @@ def add_user():
 #        conn.close()
 #
 #
-#@app.route('/users')
-#def users():
-#    try:
-#        conn = mysql.connect()
-#        cursor = conn.cursor(pymysql.cursors.DictCursor)
-#        cursor.execute("SELECT id, name, email, \
-#            password FROM user_table")
-#        rows = cursor.fetchall()
-#        resp = jsonify(rows)
-#        print(rows)
-#        resp.status_code = 200
-#        return jsonify(rows)
-#    except Exception as e:
-#        print(e)
-#    finally:
-#        cursor.close()
-#        conn.close()
-#
-#
+@app.route('/users')
+def users():
+    try:
+        current_name = session.get('name')
+        current_type = session.get('type')
+        conn = mysql.connect()
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
+        cursor.execute("SELECT * FROM user_table")
+        rows = cursor.fetchall()
+        resp = jsonify(rows)
+        resp.status_code = 200
+        # return jsonify(rows)
+        return render_template('users_list.html', rows=rows,
+                               current_name=current_name,
+                               current_type=current_type)
+    except Exception as e:
+        print(e)
+    finally:
+        cursor.close()
+        conn.close()
+
+
 #@app.route('/user/<int:id>')
 #def user(id):
 #    try:
@@ -250,15 +266,22 @@ def user_create_page():
            form.confirm_btn.data:
             print('It pass!')
             _user_name = form.name.data
-            
+            session['input_name'] = _user_name
             _user_email = form.email.data
+            session['input_email'] = _user_email
             _user_password = form.password.data
+            session['input_password'] = _user_password
             _confirm_password = form.confirm_password.data
             _type = form.type.data
+            session['input_type'] = _type
             _phone = form.phone.data
+            session['input_phone'] = _phone
             _date = form.date.data
+            session['input_date'] = _date
             _address = form.address.data
+            session['input_address'] = _address
             _profile = form.profile.data
+            session['input_profile'] = _profile
             name_error = None
             email_requ_error = None
             not_email_error = None
@@ -341,7 +364,7 @@ only number contains 11 digits. (09xxxxxxxxx)!'
                                    _type=_for_user_type,
                                    _phone=_phone, _date=_date,
                                    _address=_address, _profile=_profile,
-                                   form=userForm())
+                                   form=userForm(), current_name=current_name)
         elif (request.method == 'POST' and
               form.clear_btn.data):
             form.name.data = ""
@@ -361,6 +384,18 @@ only number contains 11 digits. (09xxxxxxxxx)!'
                     current_name=current_name)
         #print('{} THis is the email'.format(_user_email))
         if request.method == 'POST' and form.create_btn.data:
+            _user_name = session.get('input_name')
+            _user_email = session.get('input_email')
+            _user_password = session.get('input_password')
+            _profile = session.get('input_profile')
+            _type = session.get('input_type')
+            _phone = session.get('input_phone')
+            _address = session.get('input_address')
+            _raw_date = session.get('input_date')
+            # 'Sun, 01 May 2022 00:00:00 GMT' to change this format to %Y-%m-%d
+            dt = dateutil.parser.parse(_raw_date)
+            _date = dt.strftime('%Y-%m-%d')
+            print(_date)
             print('pressed Create ')
             conn = mysql.connect()
             cursor = conn.cursor(pymysql.cursors.DictCursor)
@@ -370,6 +405,7 @@ only number contains 11 digits. (09xxxxxxxxx)!'
             for row in rows:
                 print(_user_email)
                 print("Email check point")
+                print(row['email'])
                 if _user_email == row['email']:
                     email_exist_error = 'User with this email exist'
                     return render_template('user_create.html',
@@ -379,7 +415,10 @@ only number contains 11 digits. (09xxxxxxxxx)!'
             print("Email passed")
             now = datetime.now()
             current_time = now.strftime("%Y-%m-%d|%H:%M:%S")
-            _id = '{}'.format(len(rows)+1)
+            #_id = '{}'.format(len(rows)+1)
+            last_row = rows[len(rows)-1]
+            print(last_row['id'])
+            _id = last_row['id'] + 1
             _hashed_password = bcrypt.generate_password_hash(_user_password)
             _profile = 'rre21'
             _create_user_id = session.get('id')
@@ -394,11 +433,12 @@ only number contains 11 digits. (09xxxxxxxxx)!'
                                 %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
             data = (_id, _user_name, _user_email, _hashed_password, _profile,
                     _type, _phone, _address, _date, _create_user_id,
-                    _update_user_id, '', _create_at, _update_at, '')
+                    _update_user_id, None, _create_at, _update_at, None)
             print(data)
+            print(_date)
             cursor.execute(sql, data)
             conn.commit()
-            return " add to db done"
+            return redirect('/users')
         return render_template('user_create.html', form=userForm(),
                                current_name=current_name)
     except Exception as e:

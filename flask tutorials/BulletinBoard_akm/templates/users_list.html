@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+ 
+{% block y %}
+ 
+  <div class="create_wrapper">
+    <nav>
+      <div class="left_nav">
+        <h2 class="logo">SCM Bulletin Board</h2>
+        <a href="/users" class="user_list">Users</a>
+        <a href="#" class="post_list">Posts</a>
+      </div>
+      <div class="right_nav">
+        <h2 class="login_user">{{ current_name }}</h2>
+        <a href="/logout" class="logout">logout</a>
+      </div>
+    </nav>
+    <h2>User List</h2>
+    {% if type == '1' %}
+      <div class="admin_view">
+        <input type="text" placeholder="Name" class="input_box">
+        <input type="text" placeholder="Email" class="input_box">
+        <input type="date" placeholder="Created from" class="input_box">
+        <input type="date" placeholder="Created to" class="input_box">
+        <input type="button" placeholder="Search" class="input_box sa_btn">
+        <input type="button" placeholder="Add" class="input_box sa_btn">
+      </div>
+
+    {% endif %}
+    <table>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Created Us</th>
+        <th>Phone</th>
+        <th>Date of Birth</th>
+        <th>Address</th>
+        <th>Created Date</th>
+        <th>Updated Date</th>
+        <th> </th>
+      </tr>
+      {% for row in rows %}
+        
+        <tr>
+          <td><a href="/user/{{ row['id'] }}">{{ row['name'] }}</a></td>
+          <td>{{ row['email'] }}</td>
+          <td>{{ row['created_user_id'] }}</td>
+          <td>{{ row['phone'] }}</td>
+          <td>{{ row['dob'] }}</td>
+          <td>{{ row['address'] }}</td>
+          <td>{{ row['created_at'] }}</td>
+          <td>{{ row['updated_at'] }}</td>
+          {% if type == '1' %}
+            <td><a href="/delete/{{ row['id'] }}">Delete</a></td>
+          {% endif %}
+          
+        </tr>
+      {% endfor %}
+    </table>
+{% endblock %}
