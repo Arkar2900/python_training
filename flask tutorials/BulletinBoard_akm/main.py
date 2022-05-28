@@ -62,6 +62,64 @@ def logout():
     session.clear()
     return render_template('login.html', form=loginForm())
 
+# change the password API
+
+
+@app.route('/password_change', methods=['POST', 'GET'])
+def change():
+    form = userForm()
+    _user_password = form.password.data
+    # session['input_password'] = _user_password
+    _confirm_password = form.confirm_password.data
+    if request.method == 'POST' and form.confirm_btn.data:
+        cannot_insert = False
+        password_equal_error = None
+        password_format_error = None
+        done = None
+        if _user_password != _confirm_password:
+            password_equal_error = '*Password and confirm password \
+must be same.'
+            cannot_insert = True
+        print('pw and con-pw not same')
+
+        def include_num(x_string):
+            for i in x_string:
+                if i.isdigit():
+                    return True
+            return False
+
+        def has_uppercase(y_string):
+            for j in y_string:
+                if j.isupper():
+                    return True
+            return False
+        if len(_user_password) < 9 or not include_num(_user_password) or\
+           not has_uppercase(_user_password):
+            password_format_error = '*Password must be more than \
+8 characters long, must conatain 1 Uppercase and 1 Numeric.'
+            cannot_insert = True
+        if cannot_insert:
+            return render_template('password_change.html',
+                                   password_equal_error=password_equal_error,
+                                   password_format_error=password_format_error,
+                                   form=userForm())
+        conn = mysql.connect()
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
+        _hashed_password = bcrypt.generate_password_hash(_user_password)
+        _id = int(session.get('update_id'))
+        sql = "UPDATE user_table SET password=%s WHERE id=%s"
+        data = (_hashed_password, _id)
+        cursor.execute(sql, data)
+        conn.commit()
+        print("this is id whose pw has been changed")
+        print(_id)
+        done = 'The password is successfully changed!'
+        session['done'] = done
+        session['check_once'] = 0
+        return redirect('/update/{}'.format(_id))
+    return render_template('password_change.html', form=userForm())
+
+
 # After pressing "login" button this API will work
 
 
@@ -88,7 +146,6 @@ def submit():
                 flash('*Password is required.')
             for row in rows:
                 db_hash_password = row['password']
-                print('hash_db_pw is {}'.format(db_hash_password))
                 if row['email'] == email and \
                    bcrypt.check_password_hash(db_hash_password, _password):
                     print('it is same')
@@ -289,28 +346,19 @@ def search():
             conn.close()
 
 
-@app.route('/user/<int:id>')
-def user(id):
-    try:
-        print(id)
-        conn = mysql.connect()
-        cursor = conn.cursor(pymysql.cursors.DictCursor)
-        cursor.execute("SELECT * FROM user_table WHERE id={}".format(id))
-        row = cursor.fetchone()
-        resp = jsonify(row)
-        resp.status_code = 200
-        return
-    except Exception as e:
-        print(e)
-    finally:
-        cursor.close()
-        conn.close()
-
-
 @app.route('/update/<int:id>', methods=['POST', 'GET'])
 def update_user(id):
     try:
-        print(id)
+        # session['chech_once'] is for showing the \
+        # 'password changing is successful' only for one time
+        if session.get('check_once'):
+            i = session.get('check_once')
+            i += 1
+            session['check_once'] = i
+        else:
+            session['check_once'] = 2
+            i = session.get('check_once')
+        session['update_id'] = id
         current_name = session.get('name')
         form = userForm()
         conn = mysql.connect()
@@ -331,6 +379,7 @@ def update_user(id):
         if form.confirm_update_btn.data and form.validate_on_submit() and\
            request.method == "POST":
             print('this is in update It pass!')
+            
             _user_name = form.name.data
             session['input_name'] = _user_name
             _user_email = form.email.data
@@ -456,11 +505,14 @@ only number contains 11 digits. (09xxxxxxxxx)!'
             cursor.execute(sql, data)
             conn.commit()
             return redirect('/users')
+        done = session.get('done')
+        print('this is the "i" value ', i)
         return render_template('update_page.html', _name=_name,
                                _email=_email, _type=_type,
                                _phone=_phone, _date=_date,
                                _address=_address, _profile=_profile,
-                               form=form)
+                               form=form, done=done, i=i,
+                               current_name=current_name)
     except Exception as e:
         print(e)
     finally:
@@ -468,21 +520,24 @@ only number contains 11 digits. (09xxxxxxxxx)!'
         conn.close()
 
 
-#@app.route('/delete/<int:id>')
-#def delete_user(id):
-#    try:
-#        conn = mysql.connect()
-#        cursor = conn.cursor()
-#        cursor.execute("DELETE FROM user_table WHERE id={}".format(id))
-#        conn.commit()
-#        resp = jsonify('User deleted successfully!')
-#        resp.status_code = 200
-#        return resp
-#    except Exception as e:
-#        print(e)
-#    finally:
-#        cursor.close()
-#        conn.close()
+@app.route('/delete/<int:id>')
+def delete_user(id):
+    try:
+        print('this is id', id)
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM user_table WHERE id={}".format(id))
+        conn.commit()
+        resp = jsonify('User deleted successfully!')
+        resp.status_code = 200
+        return redirect('/users')
+    except Exception as e:
+        print(e)
+    finally:
+        cursor.close()
+        conn.close()
+
+
 # To create user after pressing "Create User For Admin" button
 
 

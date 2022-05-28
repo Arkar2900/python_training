@@ -15,6 +15,10 @@
       </div>
     </nav>
     <div class="main_blk">
+      {% if done and i == 2 %}
+      <br>
+          <p class="req_message">{{ done }}</p><br><br>
+      {% endif %}
       <form method="POST">
         {{ form.hidden_tag() }}
         {{ form.name.label }}
@@ -56,7 +60,7 @@
         {{ form.address.label }}
         <p>{{ form.address(value= _address )}}</p>
         <br><br>
-        <a href="#">Change Password</a>
+        <a href="/password_change">Change Password</a>
         <br><br><br>
         {{ form.profile.label }}
         <p>{{ form.profile(value= _profile )}}</p>

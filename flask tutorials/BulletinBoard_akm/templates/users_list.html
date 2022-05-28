@@ -56,8 +56,9 @@
           <td>{{ row['created_at'] }}</td>
           <td>{{ row['updated_at'] }}</td>
           {% if current_type  == '1' %}
-          <td><a href="#" onclick="alert_function()" value = {{ row['id'] }}>Delete</a></td>
+          <td><a href="#" id = "{{ row['id'] }}" class="to_delete">Delete</a></td>
           {% endif %}
+          
           
         </tr>
       {% endfor %}
