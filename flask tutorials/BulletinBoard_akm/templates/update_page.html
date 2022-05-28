@@ -15,17 +15,17 @@
       </div>
     </nav>
     <div class="main_blk">
-      <form method="POST" action='/user_create_page'>
+      <form method="POST">
         {{ form.hidden_tag() }}
         {{ form.name.label }}
-        <p>{{ form.name}}</p>
+        <p>{{ form.name(value= _name ) }}</p>
         {% if name_error %}
         <br>
           <p class="req_message">{{ name_error }}</p>
         {% endif %}
         <br><br>
         {{ form.email.label }}
-        <p>{{ form.email}}</p>
+        <p>{{ form.email(value= _email  )}}</p>
         {% if email_exist_error %}
           <p class="req_message">{{ email_exist_error }}</p>
         {% endif %}
@@ -36,42 +36,33 @@
           <p class="req_message">{{ not_email_error }}</p>
         {% endif %}
         <br><br>
-        {{ form.password.label }}
-        <p>{{ form.password}}</p>
-        {% if password_equal_error %}
-          <p class="req_message">{{ password_equal_error }}</p>
-        {% endif %}
-        {% if password_format_error %}
-          <p class="req_message">{{ password_format_error }}</p>
-        {% endif %}
-        <br><br>
-        {{ form.confirm_password.label }}
-        <p>{{ form.confirm_password}}</p>
-        <br><br>
         {{ form.type.label }}
-        <p>{{ form.type}}</p>
+        <p>{{ form.type(value= _type )}}</p>
         <br><br>
         {{ form.phone.label }}
-        <p>{{ form.phone}}</p>
+        <p>{{ form.phone(value= _phone )}}</p>
         {% if phone_error %}
         <br>
           <p class="req_message">{{ phone_error }}</p>
         {% endif %}
         <br><br>
         {{ form.date.label }}
-        <p>{{ form.date}}</p>
+        <p>{{ form.date(value= _date )}}</p>
         {% if date_error %}
+        <br>
           <p class="req_message">{{ date_error }}</p>
         {% endif %}
         <br><br>
         {{ form.address.label }}
-        <p>{{ form.address}}</p>
+        <p>{{ form.address(value= _address )}}</p>
+        <br><br>
+        <a href="#">Change Password</a>
         <br><br><br>
         {{ form.profile.label }}
-        <p>{{ form.profile}}</p>
+        <p>{{ form.profile(value= _profile )}}</p>
         <br><br>
-        {{ form.confirm_btn(class='main_btn')}}
-        {{ form.clear_btn(class='main_btn') }}
+        {{ form.confirm_update_btn(class='main_btn')}}
+        {{ form.update_clear_btn(class='main_btn') }}
     </form>
     </div>
   </div>

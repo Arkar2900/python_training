@@ -15,15 +15,15 @@
       </div>
     </nav>
     <h2>User List</h2>
-    {% if type == '1' %}
-      <div class="admin_view">
-        <input type="text" placeholder="Name" class="input_box">
-        <input type="text" placeholder="Email" class="input_box">
-        <input type="date" placeholder="Created from" class="input_box">
-        <input type="date" placeholder="Created to" class="input_box">
-        <input type="button" placeholder="Search" class="input_box sa_btn">
-        <input type="button" placeholder="Add" class="input_box sa_btn">
-      </div>
+    {% if current_type == '1' %}
+      <form class="admin_view" action="/search" method="post">
+        <input type="text" placeholder="Name" class="input_box" name="user_name">
+        <input type="text" placeholder="Email" class="input_box" name="user_email">
+        <input placeholder="Created From" class="input_box" type="text" onfocus="(this.type='date')" id="from_date" name="from_date">
+        <input placeholder="Created To" class="input_box" type="text" onfocus="(this.type='date')" id="to_date" name="to_date">
+        <input type="submit" value="Search" class="input_box sa_btn" name="search">
+        <input type="submit" value="Add" class="input_box sa_btn" name="add">
+      </form>
 
     {% endif %}
     <table>
@@ -36,21 +36,27 @@
         <th>Address</th>
         <th>Created Date</th>
         <th>Updated Date</th>
+        {% if current_type =='1' %}
         <th> </th>
+        {% endif %}
       </tr>
       {% for row in rows %}
         
         <tr>
-          <td><a href="/user/{{ row['id'] }}">{{ row['name'] }}</a></td>
+          {% if current_type  == '1' %}
+          <td><a href="/update/{{ row['id'] }}" method="post">{{ row['name'] }}</a></td>
+          {% else %}
+          <td>{{ row['name'] }}</td>
+          {%  endif %}
           <td>{{ row['email'] }}</td>
-          <td>{{ row['created_user_id'] }}</td>
+          <td>{{ row['create_user_id'] }}</td>
           <td>{{ row['phone'] }}</td>
           <td>{{ row['dob'] }}</td>
           <td>{{ row['address'] }}</td>
           <td>{{ row['created_at'] }}</td>
           <td>{{ row['updated_at'] }}</td>
-          {% if type == '1' %}
-            <td><a href="/delete/{{ row['id'] }}">Delete</a></td>
+          {% if current_type  == '1' %}
+          <td><a href="#" onclick="alert_function()" value = {{ row['id'] }}>Delete</a></td>
           {% endif %}
           
         </tr>

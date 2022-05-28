@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+ 
+{% block y %}
+ 
+<nav>
+  <div class="left_nav">
+    <h2 class="logo">SCM Bulletin Board</h2>
+    <a href="#" class="user_list">Users</a>
+    <a href="#" class="post_list">Posts</a>
+  </div>
+  <div class="right_nav">
+    <h2 class="login_user">{{ current_name }}</h2>
+    <a href="/logout" class="logout">logout</a>
+  </div>
+
+</nav>
+    <div class="left_blk">
+      <form method="POST">
+        {{ form.hidden_tag() }}
+        {{ form.name.label }}
+        <p>{{ _user_name}}</p>
+        <br><br>
+        {{ form.email.label }}
+        <p>{{ _user_email}}</p>
+        <br><br>
+        {{ form.type.label }}
+        <p>{{ _type}}</p>
+        <br><br>
+        {{ form.phone.label }}
+        <p>{{ _phone}}</p>
+        <br><br>
+        {{ form.date.label }}
+        <p>{{ _date}}</p>
+        <br><br>
+        {{ form.address.label }}
+        <p>{{ _address}}</p>
+        <br><br>
+        {{ form.profile.label }}
+        <p>{{ _profile}}</p>
+        <img src="_profile" alt="User profile">
+        <br><br>
+        {{ form.update_create_btn(class='main_btn')}}
+        <br>
+        {{ form.update_cancel_btn(class='main_btn') }}
+    </form>
+    </div>
+{% endblock %}
