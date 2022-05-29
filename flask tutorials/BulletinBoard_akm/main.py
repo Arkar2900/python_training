@@ -1,9 +1,9 @@
-from flask import Flask, flash, render_template, request, session, redirect
+from flask import Flask, flash, render_template, request, session, redirect, url_for
 from flask_session import Session
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField, DateField,\
     TextAreaField, FileField, SelectField
-import os
+import os, shutil
 import pymysql
 from flask_bcrypt import Bcrypt
 from db import mysql
@@ -11,6 +11,7 @@ from flask import jsonify
 from app import app
 from datetime import datetime
 import dateutil.parser
+from werkzeug.utils import secure_filename
 
 
 bcrypt = Bcrypt(app)
@@ -21,6 +22,21 @@ Session(app)
 app = Flask(__name__)
 SECRET_KEY = os.urandom(32)
 app.config['SECRET_KEY'] = SECRET_KEY
+
+# If running with others PC filepath always needs to be check and must have the path like following
+# 'path + \flask tutorials\BulletinBoard_akm\static\temporary'
+path = os.getcwd()
+next_folder = r'\flask tutorials'
+bulletin_folder = r'\BulletinBoard_akm'
+static_folder = r'\static'
+folder_name = r'\temporary'
+first_folder = path + next_folder + bulletin_folder + static_folder
+if not os.path.exists(first_folder):
+    os.mkdir(first_folder)
+folder_to_save_files = first_folder + folder_name
+UPLOAD_FOLDER = folder_to_save_files
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
 class loginForm(FlaskForm):
@@ -422,8 +438,8 @@ only number contains 11 digits. (09xxxxxxxxx)!'
                 cannot_insert = True
             _input_date = datetime.strptime(str(_date), "%Y-%m-%d")
             present = datetime.now()
-            if _input_date > present:
-                date_error = 'Date of birth is bigger than today date.'
+            if _input_date > present or not _input_date:
+                date_error = 'It should not be empty and date of birth is bigger than today date. '
                 cannot_insert = True
             if cannot_insert:
                 return render_template(
@@ -564,14 +580,17 @@ def user_create_page():
             session['input_date'] = _date
             _address = form.address.data
             session['input_address'] = _address
-            _profile = form.profile.data
-            session['input_profile'] = _profile
+            # _profile = form.profile.data
+            _profile = request.files['file']
+            session['input_profile'] = _profile.filename
             name_error = None
             email_requ_error = None
             not_email_error = None
             password_equal_error = None
             password_format_error = None
             phone_error = None
+            file_error = None
+            date_error = None
             cannot_insert = False
             print('check empty!')
             if not _user_name:
@@ -618,8 +637,19 @@ only number contains 11 digits. (09xxxxxxxxx)!'
                 cannot_insert = True
             _input_date = datetime.strptime(str(_date), "%Y-%m-%d")
             present = datetime.now()
-            if _input_date > present:
-                date_error = 'Date of birth is bigger than today date.'
+            if _input_date > present or not _input_date:
+                date_error = 'Date should not be empty and date of birth is bigger than today date.'
+                cannot_insert = True
+
+            def allowed_file(filename):
+                return '.' in filename and filename.rsplit('.', 1)[1].lower()\
+                    in ALLOWED_EXTENSIONS
+            print("this is the file: {}".format(_profile))
+            _file = _profile.filename
+            print(_file, '  ', type(_file))
+            if _file and not allowed_file(_file):
+                file_error = 'The chosen file is not valid file type. Allow\
+file type are "jpg", "png", and "jpeg"'
                 cannot_insert = True
             if cannot_insert:
                 return render_template(
@@ -629,31 +659,34 @@ only number contains 11 digits. (09xxxxxxxxx)!'
                     password_equal_error=password_equal_error,
                     password_format_error=password_format_error,
                     phone_error=phone_error, date_error=date_error,
+                    file_error=file_error,
                     form=userForm(),
                     current_name=current_name)
             if _type == '0':
                 _for_user_type = 'User'
             else:
                 _for_user_type = 'Admin'
-            #my_file = _profile
-            #print(my_file)
-            #path = os.getcwd()
-            #folder_name = r'\temporary'
-            #folder_to_save_files = path + folder_name
-            #if not os.path.exists(folder_to_save_files):
-            #    os.mkdir(folder_to_save_files)
-            #print(folder_to_save_files)
-            #my_file.save(os.path.join(folder_to_save_files, my_file.filename))
-            #print(folder_to_save_files)
-            #_temp_profile = url_for('temporary', filename=_profile)
-            #print(_temp_profile)
+            print(folder_to_save_files)
+            print('This is the uploaded file:  {}'.format(_file))
+            
+            if not os.path.exists(folder_to_save_files):
+                os.mkdir(folder_to_save_files)
+            _profile.save(os.path.join(folder_to_save_files, _profile.filename))
+            print(folder_to_save_files)
+            print(type(_profile))
+            print("Saving is done")
+            _folder_file = 'temporary/' + _file
+            print(type(_file))
+            session['input_profile_path'] = folder_to_save_files +\
+                r'\{}'.format(_file)
             return render_template('show_form.html', _user_name=_user_name,
                                    _user_email=_user_email,
                                    _user_password=_user_password_dots,
                                    _confirm_password=_confirm_password,
                                    _type=_for_user_type,
                                    _phone=_phone, _date=_date,
-                                   _address=_address, _profile=_profile,
+                                   _address=_address, _file=_file,
+                                   _folder_file=_folder_file,
                                    form=userForm(), current_name=current_name)
         elif (request.method == 'POST' and
               form.clear_btn.data):
@@ -708,18 +741,27 @@ only number contains 11 digits. (09xxxxxxxxx)!'
             last_row = rows[len(rows)-1]
             _id = last_row['id'] + 1
             _hashed_password = bcrypt.generate_password_hash(_user_password)
-            _profile = 'rre21'
             _create_user_id = session.get('id')
             _update_user_id = session.get('id')
             _create_at = current_time
             _update_at = current_time
+            user_folder = r'\{}'.format(_id)
+            for_user_profile = first_folder + user_folder
+            if not os.path.exists(for_user_profile):
+                os.mkdir(for_user_profile)
+            # _profile is filename because it got from session.
+            # session cannnot accept FileStorage
+            file_from_folder = session.get('input_profile_path')
+            shutil.move(file_from_folder, for_user_profile)
+            file_path_for_db = for_user_profile + r'\{}'.format(_profile)
             sql = "INSERT INTO user_table(`id`, `name`, `email`, `password`,\
                 `profile`, `type`, `phone`, `address`, `dob`, \
                     `create_user_id`, `updated_user_id`, `deleted_user_id`,\
                         `created_at`, `updated_at`,\
                             `deleted_at`) VALUES(%s, %s, %s, %s,\
                                 %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-            data = (_id, _user_name, _user_email, _hashed_password, _profile,
+            data = (_id, _user_name, _user_email, _hashed_password,
+                    file_path_for_db,
                     _type, _phone, _address, _date, _create_user_id,
                     _update_user_id, None, _create_at, _update_at, None)
             print(data)
@@ -731,6 +773,140 @@ only number contains 11 digits. (09xxxxxxxxx)!'
                                current_name=current_name)
     except Exception as e:
         print(e)
+
+
+@app.route('/add_post')
+def add_user():
+    try:
+        _id = '2'
+        _title = 'second title'
+        _description = 'This is the second post.'
+        _status = '1'
+        _create_user_id = "1"
+        _updated_user_id = "1"
+        _deleted_user_id = "1"
+        _created_at = '2022-02-01'
+        _updated_at = '2022-02-01'
+        _deleted_at = '2023-01-01'
+        # validate the received values
+        if _title and _description and _status and _create_user_id and\
+            _updated_user_id and _deleted_user_id and _created_at and\
+                _updated_at and _deleted_at:
+            # save edits
+            sql = "INSERT INTO post_table(id, title, description, status,\
+                create_user_id, updated_user_id, deleted_user_id,\
+                    created_at, updated_at, deleted_at)\
+                VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            data = (_id, _title, _description, _status, _create_user_id,
+                    _updated_user_id, _deleted_user_id, _created_at,
+                    _updated_at, _deleted_at)
+            conn = mysql.connect()
+            cursor = conn.cursor()
+            cursor.execute(sql, data)
+            conn.commit()
+            resp = jsonify('Post added successfully!')
+            resp.status_code = 200
+            return resp
+        else:
+            return not_found()
+    except Exception as e:
+        print(e)
+    finally:
+        cursor.close()
+        conn.close()
+
+
+@app.route('/posts')
+def posts():
+    try:
+        conn = mysql.connect()
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
+        cursor.execute("SELECT * FROM post_table")
+        rows = cursor.fetchall()
+        resp = jsonify(rows)
+        resp.status_code = 200
+        return resp
+    except Exception as e:
+        print(e)
+    finally:
+        cursor.close()
+        conn.close()
+
+
+@app.route('/post/<int:id>')
+def post(id):
+    try:
+        conn = mysql.connect()
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
+        cursor.execute("SELECT id, title, description, status FROM post_table\
+            WHERE id=%s", id)
+        row = cursor.fetchone()
+        resp = jsonify(row)
+        resp.status_code = 200
+        return resp
+    except Exception as e:
+        print(e)
+    finally:
+        cursor.close()
+        conn.close()
+
+
+@app.route('/post_update/<int:id>')
+def update_post(id):
+    try:
+        _id = '1'
+        _title = 'first title'
+        _description = 'This is the first updated post.'
+        _status = '1'
+        _create_user_id = "1"
+        _updated_user_id = "1"
+        _deleted_user_id = "1"
+        _created_at = '2022-02-01'
+        _updated_at = '2022-02-01'
+        _deleted_at = '2023-01-01'
+        # validate the received values
+        if _title and _description and _status and _create_user_id and\
+            _updated_user_id and _deleted_user_id and _created_at and\
+                _updated_at and _deleted_at:
+            # save edits
+            sql = "UPDATE post_table SET id=%s, title=%s, description=%s, status=%s,\
+                create_user_id=%s, updated_user_id=%s, deleted_user_id=%s,\
+                    created_at=%s, updated_at=%s, deleted_at=%s\
+                    WHERE id=%s"
+            data = (_id, _title, _description, _status, _create_user_id,
+                    _updated_user_id, _deleted_user_id, _created_at,
+                    _updated_at, _deleted_at, id)
+            conn = mysql.connect()
+            cursor = conn.cursor()
+            cursor.execute(sql, data)
+            conn.commit()
+            resp = jsonify('Post updated successfully!')
+            resp.status_code = 200
+            return resp
+        else:
+            return not_found()
+    except Exception as e:
+        print(e)
+    finally:
+        cursor.close()
+        conn.close()
+
+
+@app.route('/delete_post/<int:id>')
+def delete_post(id):
+    try:
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM post_table WHERE id=%s", (id))
+        conn.commit()
+        resp = jsonify('User deleted successfully!')
+        resp.status_code = 200
+        return resp
+    except Exception as e:
+        print(e)
+    finally:
+        cursor.close()
+        conn.close()
 
 
 @app.errorhandler(404)

@@ -15,7 +15,7 @@
       </div>
     </nav>
     <div class="main_blk">
-      <form method="POST" action='/user_create_page'>
+      <form method="POST" action='/user_create_page' enctype=multipart/form-data>
         {{ form.hidden_tag() }}
         {{ form.name.label }}
         <p>{{ form.name}}</p>
@@ -68,7 +68,10 @@
         <p>{{ form.address}}</p>
         <br><br><br>
         {{ form.profile.label }}
-        <p>{{ form.profile}}</p>
+        <p><input type="file" name="file" ></p>
+        {% if file_error %}
+          <p class="req_message">{{ file_error }}</p>
+        {% endif %}
         <br><br>
         {{ form.confirm_btn(class='main_btn')}}
         {{ form.clear_btn(class='main_btn') }}

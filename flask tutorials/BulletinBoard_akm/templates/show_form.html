@@ -39,8 +39,11 @@
         <p>{{ _address}}</p>
         <br><br>
         {{ form.profile.label }}
-        <p>{{ _profile}}</p>
-        <img src="_profile" alt="User profile">
+        <p>{{ _file }}</p>
+        <div class="img">
+          <img src="{{ url_for('static', filename=_folder_file)}}" alt="User profile" width="120" height="90">
+        </div>
+        
         <br><br>
         {{ form.create_btn(class='main_btn')}}
         <br>

@@ -16,13 +16,13 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `bulletinboard`
+-- Table structure for table `user_table`
 --
 
-DROP TABLE IF EXISTS `bulletinboard`;
+DROP TABLE IF EXISTS `user_table`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `bulletinboard` (
+CREATE TABLE `user_table` (
   `id` int NOT NULL,
   `name` varchar(45) NOT NULL,
   `email` varchar(45) NOT NULL,
@@ -44,13 +44,13 @@ CREATE TABLE `bulletinboard` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `bulletinboard`
+-- Dumping data for table `user_table`
 --
 
-LOCK TABLES `bulletinboard` WRITE;
-/*!40000 ALTER TABLE `bulletinboard` DISABLE KEYS */;
-INSERT INTO `bulletinboard` VALUES (1,'arkar','arkar@gmail.com','123','23e','1','0987','mdy','2012-02-03',1,2,3,'2022-05-20 00:00:00','2022-05-20 00:00:00','2022-05-20 00:00:00'),(2,'Kevin','kevin@gmail.com','kev876','23e','0','0987','mdy','2012-02-03',1,2,3,'2022-05-20 00:00:00','2022-05-20 00:00:00','2022-05-20 00:00:00'),(3,'john','john@gmail.com','pbkdf2:sha256:260000$v0jILKxXCfqllKzO$e39bf691a999ab8e77aff6c0c1d41e0ea91f27c496fe7051aa29cbdef321bd6d','de4','0','09234551','ygn','2001-09-24',3,4,5,'2011-03-02 00:00:00','2022-01-01 00:00:00','2022-02-09 00:00:00');
-/*!40000 ALTER TABLE `bulletinboard` ENABLE KEYS */;
+LOCK TABLES `user_table` WRITE;
+/*!40000 ALTER TABLE `user_table` DISABLE KEYS */;
+INSERT INTO `user_table` VALUES (1,'admin','admin@gmail.com','$2b$12$NmXwTPR7iCvEZUCaxQVdEOix1M.yv8myCE9UWQ0K8M8UYf62KB2qO','arkar3232','1','09977423768','mdy','1999-06-27',1,1,1,'2022-05-28 00:00:00','2022-05-28 00:00:00','2022-05-28 00:00:00'),(3,'john','john@gmail.com','$2b$12$IcWFO/9Fz8QXRtWvXWAe7OwlybEg4m79UTi8CdsW7IcVVUGaLIT.C','rre21','0','09234551432','MKN','2001-09-01',3,1,5,'2011-03-02 00:00:00','2022-05-27 15:05:50','2022-02-09 00:00:00'),(4,'kane','kane@gmail.com','$2b$12$actxvfDq55/gmTXniGkr2e8dXzfoytAPJlADLBqGrqJDXqkwhbh5G','de4','0','09234551','ygn','2001-09-24',3,4,5,'2011-03-02 00:00:00','2022-01-01 00:00:00','2022-02-09 00:00:00'),(5,'jame','jame@gmail.com','$2b$12$J9BFU8dq4lJX0eZmhys1o.IBF8rSBZYMlGpAlCwTVOdoNQtcIqjAu','rre21','0','09234551432','YGN','1999-05-01',1,1,NULL,'2022-05-28 11:41:01','2022-05-28 11:41:01',NULL),(6,'admin','adminadmin@gmail.com','$12$Pb1TYWlZtNDlOAHqVDS.5.ZYI/FIgc7BX8YHyeYC/8.g5dNwP/Lp2','arkar3232','1','09977423768','mdy','1999-06-27',1,1,1,'2022-05-28 00:00:00','2022-05-28 00:00:00','2022-05-28 00:00:00'),(7,'Drum','drum@gmail.com','$2b$12$.ng62YnP2f/iyU2ZHqpnGO0iYhLQ60R97W7.A7L6Nlm7ASbz4PiTi','C:\\Users\\Admin\\OneDrive\\Desktop\\Git_ojt\\python_training\\flask tutorials\\BulletinBoard_akm\\static\\7\\sample_profile.jpg','1','09234551432','adsd','2022-05-01',1,1,NULL,'2022-05-29 22:50:05','2022-05-29 22:50:05',NULL);
+/*!40000 ALTER TABLE `user_table` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -62,4 +62,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-05-24 10:15:35
+-- Dump completed on 2022-05-29 23:03:52

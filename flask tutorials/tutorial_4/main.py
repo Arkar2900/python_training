@@ -39,6 +39,7 @@ def upload_file():
         my_file = request.files['file']
         timestr = time.strftime('%Y%m%d')
         print(timestr)
+        print(type(my_file))
         path = os.getcwd()
         folder_name = r'\my_folder'
         folder_time = r'\{}'.format(timestr)
