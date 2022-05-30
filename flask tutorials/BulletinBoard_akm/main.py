@@ -1,4 +1,4 @@
-from flask import Flask, flash, render_template, request, session, redirect, url_for
+from flask import Flask, flash, render_template, request, session, redirect
 from flask_session import Session
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField, DateField,\
@@ -11,7 +11,6 @@ from flask import jsonify
 from app import app
 from datetime import datetime
 import dateutil.parser
-from werkzeug.utils import secure_filename
 
 
 bcrypt = Bcrypt(app)
@@ -63,6 +62,15 @@ class userForm(FlaskForm):
     update_create_btn = SubmitField('Update')
     cancel_btn = SubmitField('Cancel')
     update_cancel_btn = SubmitField('Cancel')
+
+
+class postForm(FlaskForm):
+    post_title = StringField('Title')
+    post_description = TextAreaField('Description')
+    confirm_post = SubmitField('Confirm')
+    clear_post = SubmitField('Clear')
+    create_post = SubmitField('Create')
+    cancel_post = SubmitField('Cancel')
 
 
 # Home page/ login page
@@ -668,7 +676,6 @@ file type are "jpg", "png", and "jpeg"'
                 _for_user_type = 'Admin'
             print(folder_to_save_files)
             print('This is the uploaded file:  {}'.format(_file))
-            
             if not os.path.exists(folder_to_save_files):
                 os.mkdir(folder_to_save_files)
             _profile.save(os.path.join(folder_to_save_files, _profile.filename))
@@ -775,29 +782,80 @@ file type are "jpg", "png", and "jpeg"'
         print(e)
 
 
-@app.route('/add_post')
+@app.route('/post_create_page', methods=['POST', 'GET'])
 def add_user():
     try:
-        _id = '2'
-        _title = 'second title'
-        _description = 'This is the second post.'
-        _status = '1'
-        _create_user_id = "1"
-        _updated_user_id = "1"
-        _deleted_user_id = "1"
-        _created_at = '2022-02-01'
-        _updated_at = '2022-02-01'
-        _deleted_at = '2023-01-01'
-        # validate the received values
-        if _title and _description and _status and _create_user_id and\
-            _updated_user_id and _deleted_user_id and _created_at and\
-                _updated_at and _deleted_at:
-            # save edits
+        form = postForm()
+        current_name = session.get("name")
+        if request.method == 'POST' and\
+           form.confirm_post.data:
+            print('It passed and started for post adding!')
+            _post_title = form.post_title.data
+            session['input_post_title'] = _post_title
+            _post_description = form.post_description.data
+            session['input_post_description'] = _post_description
+            no_title_error = None
+            long_title_error = None
+            no_des_error = None
+            cannot_insert = False
+            if not _post_title:
+                no_title_error = 'Title is required.'
+                cannot_insert = True
+            if len(_post_title) > 255:
+                long_title_error = 'Title must be less than 255 letters.'
+                cannot_insert = True
+            if not _post_description:
+                no_des_error = 'Description is required.'
+                cannot_insert = True
+            if cannot_insert:
+                return render_template('post_form.html',
+                                       no_title_error=no_title_error,
+                                       long_title_error=long_title_error,
+                                       no_des_error=no_des_error,
+                                       form=postForm(),
+                                       current_name=current_name)
+            return render_template('show_post_form.html',
+                                   _post_title=_post_title,
+                                   _post_description=_post_description,
+                                   form=form,
+                                   current_name=current_name)
+        elif (request.method == 'POST' and form.clear_post.data):
+            form.post_title.data = ''
+            form.post_description.data = ''
+            return render_template('post_form.html', form=form,
+                                   current_name=current_name)
+        if request.method == 'POST' and form.create_post.data:
+            _post_title = session.get('input_post_title')
+            _post_description = session.get('input_post_description')
+            post_exist_error = None
+            conn = mysql.connect()
+            cursor = conn.cursor(pymysql.cursors.DictCursor)
+            cursor.execute("SELECT * FROM post_table")
+            rows = cursor.fetchall()
+            for row in rows:
+                if row['title'] == _post_title:
+                    post_exist_error = 'Post title already exist.'
+                    return render_template('post_form.html',
+                                           post_exist_error=post_exist_error,
+                                           form=form,
+                                           current_name=current_name)
+            last_row = rows[len(rows)-1]
+            _id = last_row['id'] + 1
+            _status = 1
+            _create_user_id = session.get('id')
+            _updated_user_id = session.get('id')
+            _deleted_user_id = None
+            now = datetime.now()
+            current_time = now.strftime("%Y-%m-%d|%H:%M:%S")
+            _created_at = current_time
+            _updated_at = current_time
+            _deleted_at = None
             sql = "INSERT INTO post_table(id, title, description, status,\
-                create_user_id, updated_user_id, deleted_user_id,\
-                    created_at, updated_at, deleted_at)\
-                VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-            data = (_id, _title, _description, _status, _create_user_id,
+                    create_user_id, updated_user_id, deleted_user_id,\
+                        created_at, updated_at, deleted_at)\
+                    VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            data = (_id, _post_title, _post_description,
+                    _status, _create_user_id,
                     _updated_user_id, _deleted_user_id, _created_at,
                     _updated_at, _deleted_at)
             conn = mysql.connect()
@@ -806,15 +864,12 @@ def add_user():
             conn.commit()
             resp = jsonify('Post added successfully!')
             resp.status_code = 200
-            return resp
-        else:
-            return not_found()
+            return 'Going to post list'
+        return render_template('post_form.html', form=postForm(),
+                               current_name=current_name)
     except Exception as e:
         print(e)
-    finally:
-        cursor.close()
-        conn.close()
-
+    
 
 @app.route('/posts')
 def posts():

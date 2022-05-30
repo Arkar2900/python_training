@@ -44,7 +44,7 @@ CREATE TABLE `post_table` (
 
 LOCK TABLES `post_table` WRITE;
 /*!40000 ALTER TABLE `post_table` DISABLE KEYS */;
-INSERT INTO `post_table` VALUES (1,'first title','This is the first updated post.',1,1,1,1,'2022-02-01','2022-02-01','2023-01-01'),(2,'second title','This is the second post.',1,1,1,1,'2022-02-01','2022-02-01','2023-01-01');
+INSERT INTO `post_table` VALUES (1,'first title','This is the first updated post.',1,1,1,1,'2022-02-01','2022-02-01','2023-01-01'),(2,'second title','This is the second post.',1,1,1,1,'2022-02-01','2022-02-01','2023-01-01'),(3,'Post 1 By admin','This is the first post by admin',1,1,1,NULL,'2022-05-30','2022-05-30',NULL);
 /*!40000 ALTER TABLE `post_table` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -57,4 +57,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-05-29 23:03:51
+-- Dump completed on 2022-05-30 22:49:01

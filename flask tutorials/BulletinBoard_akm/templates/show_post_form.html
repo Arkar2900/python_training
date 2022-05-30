@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+ 
+{% block y %}
+ 
+<nav>
+  <div class="left_nav">
+    <h2 class="logo">SCM Bulletin Board</h2>
+    <a href="#" class="user_list">Users</a>
+    <a href="#" class="post_list">Posts</a>
+  </div>
+  <div class="right_nav">
+    <h2 class="login_user">{{ current_name }}</h2>
+    <a href="/logout" class="logout">logout</a>
+  </div>
+
+</nav>
+    <div class="left_blk">
+      <form method="POST">
+        {{ form.hidden_tag() }}
+        {{ form.post_title.label }}
+        <p>{{ _post_title}}</p>
+        <br><br>
+        {{ form.post_description.label }}
+        <p>{{ _post_description}}</p>
+        <br><br>
+        {{ form.create_post(class='main_btn')}}
+        <br>
+        {{ form.cancel_post(class='main_btn') }}
+    </form>
+    </div>
+{% endblock %}

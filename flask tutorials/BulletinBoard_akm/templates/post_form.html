@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+ 
+{% block y %}
+ 
+  <div class="create_wrapper">
+    <nav>
+      <div class="left_nav">
+        <h2 class="logo">SCM Bulletin Board</h2>
+        <a href="/users" class="user_list">Users</a>
+        <a href="#" class="post_list">Posts</a>
+      </div>
+      <div class="right_nav">
+        <h2 class="login_user">{{ current_name }}</h2>
+        <a href="/logout" class="logout">logout</a>
+      </div>
+    </nav>
+    <div class="main_blk">
+      <form method="POST">
+        {{ form.hidden_tag() }}
+        {{ form.post_title.label }}
+        <p>{{ form.post_title}}</p>
+        {% if no_title_error %}
+        <br>
+          <p class="req_message">{{ no_title_error }}</p><br>
+        {% endif %}
+        {% if post_exist_error %}
+        <br>
+          <p class="req_message">{{ post_exist_error }}</p><br>
+        {% endif %}
+        {% if long_title_error %}
+        <br>
+          <p class="req_message">{{ long_title_error }}</p><br>
+        {% endif %}
+        <br><br>
+        {{ form.post_description.label }}
+        <p>{{ form.post_description }}</p><br>
+        {% if no_des_error %}
+          <p class="req_message">{{ no_des_error }}</p><br>
+        {% endif %}
+        <br><br>
+        {{ form.confirm_post(class='main_btn')}}
+        {{ form.clear_post(class='main_btn') }}
+    </form>
+    </div>
+  </div>
+{% endblock %}
