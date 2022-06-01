@@ -1,0 +1,60 @@
+{% extends "layout.html" %}
+ 
+{% block y %}
+ 
+  <div class="create_wrapper">
+    <nav>
+      <div class="left_nav">
+        <h2 class="logo">SCM Bulletin Board</h2>
+        {% if current_type == '1' %}
+        <a href="/users" class="user_list">Users</a>
+        {% endif %}
+        {% if current_type == '0' %}
+        <a href="/update/{{ current_id }}" class="user_list">User</a>
+        {% endif %}
+        <a href="/posts" class="post_list">Posts</a>
+      </div>
+      <div class="right_nav">
+        <h2 class="login_user">{{ current_name }}</h2>
+        <a href="/logout" class="logout">logout</a>
+      </div>
+    </nav>
+    <h2>User List</h2>
+    
+      <form class="user_view" action="/post_search" method="post">
+        <input type="text"  class="input_box" name="search_item">
+        <input type="submit" value="Search" class="input_box sa_btn" name="search">
+        <input type="submit" value="Add" class="input_box sa_btn" name="add">
+        <input type="submit" value="Upload" class="input_box sa_btn" name="upload">
+        <input type="submit" value="Download" class="input_box sa_btn" name="download">
+      </form>
+
+    
+    <table>
+      <tr>
+        <th>Post Title</th>
+        <th>Post Description</th>
+        <th>Posted Us</th>
+        <th>Posted date</th>
+        <th> </th>
+        <th> </th>
+      </tr>
+      {% for row in rows %}
+        
+        <tr>
+          {% if current_type  == '1' %}
+          <td><a href="/post_update/{{ row['id'] }}" method="post">{{ row['title'] }}</a></td>
+          {% else %}
+          <td>{{ row['title'] }}</td>
+          {%  endif %}
+          <td>{{ row['description'] }}</td>
+          <td>{{ row['create_user_id'] }}</td>
+          <td>{{ row['updated_at'] }}</td>
+          <td><a href="/post_update/{{ row['id'] }}" class="to_edit">Edit</a></td>
+          <td><a href="#" id = "{{ row['id'] }}" class="to_delete_post">Delete</a></td>
+          
+          
+        </tr>
+      {% endfor %}
+    </table>
+{% endblock %}

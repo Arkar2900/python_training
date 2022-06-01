@@ -368,6 +368,8 @@ def search():
         finally:
             cursor.close()
             conn.close()
+    elif request.form['add']:
+        return redirect('/user_create_page')
 
 
 @app.route('/update/<int:id>', methods=['POST', 'GET'])
@@ -403,7 +405,6 @@ def update_user(id):
         if form.confirm_update_btn.data and form.validate_on_submit() and\
            request.method == "POST":
             print('this is in update It pass!')
-            
             _user_name = form.name.data
             session['input_name'] = _user_name
             _user_email = form.email.data
@@ -513,7 +514,7 @@ only number contains 11 digits. (09xxxxxxxxx)!'
             conn = mysql.connect()
             cursor = conn.cursor(pymysql.cursors.DictCursor)
             now = datetime.now()
-            current_time = now.strftime("%Y-%m-%d|%H:%M:%S")
+            current_time = now.strftime("%Y-%m-%d")
             _profile = 'rre21'
             _update_user_id = session.get('id')
             _update_at = current_time
@@ -744,7 +745,7 @@ file type are "jpg", "png", and "jpeg"'
                                            current_name=current_name)
             print("Email passed")
             now = datetime.now()
-            current_time = now.strftime("%Y-%m-%d|%H:%M:%S")
+            current_time = now.strftime("%Y-%m-%d")
             last_row = rows[len(rows)-1]
             _id = last_row['id'] + 1
             _hashed_password = bcrypt.generate_password_hash(_user_password)
@@ -782,11 +783,53 @@ file type are "jpg", "png", and "jpeg"'
         print(e)
 
 
+@app.route('/post_search', methods=['POST', 'GET'])
+def post_search():
+    if request.method == 'POST' and request.form['search']:
+        conn = mysql.connect()
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
+        try:
+            current_name = session.get('name')
+            current_type = session.get('type')
+            print('This is the current  type: {}'.format(current_type))
+            if request.form['search_item']:
+                _search_item = request.form.get('search_item')
+                if current_type == '0' or current_type == None:
+                    sql = "SELECT * FROM post_table WHERE title=%s OR\
+                    description=%s;"
+                    data = (_search_item, _search_item)
+                elif current_type == '1':
+                    sql = "SELECT * FROM post_table WHERE title=%s OR\
+                    description=%s OR create_user_id=%s;"
+                    data = (_search_item, _search_item, _search_item)
+                cursor.execute(sql, data)
+                rows = cursor.fetchall()
+                resp = jsonify(rows)
+                resp.status_code = 200
+                # return jsonify(rows)
+                return render_template('posts_list.html', rows=rows,
+                                       current_name=current_name,
+                                       current_type=current_type)
+            elif not request.form['search_item']:
+                return redirect('/posts')
+        except Exception as e:
+            print(e)
+        finally:
+            cursor.close()
+            conn.close()
+    elif request.form['add']:
+        return redirect('/user_create_page')
+    elif request.form['upload']:
+        return redirect('/user_create_page')
+
+
 @app.route('/post_create_page', methods=['POST', 'GET'])
 def add_user():
     try:
         form = postForm()
-        current_name = session.get("name")
+        current_name = session.get('name')
+        current_type = session.get('type')
+        current_id = session.get('id')
         if request.method == 'POST' and\
            form.confirm_post.data:
             print('It passed and started for post adding!')
@@ -813,12 +856,16 @@ def add_user():
                                        long_title_error=long_title_error,
                                        no_des_error=no_des_error,
                                        form=postForm(),
-                                       current_name=current_name)
+                                       current_name=current_name,
+                                       current_id=current_id,
+                                       current_type=current_type)
             return render_template('show_post_form.html',
                                    _post_title=_post_title,
                                    _post_description=_post_description,
                                    form=form,
-                                   current_name=current_name)
+                                   current_name=current_name,
+                                   current_type=current_type,
+                                   current_id=current_id)
         elif (request.method == 'POST' and form.clear_post.data):
             form.post_title.data = ''
             form.post_description.data = ''
@@ -838,7 +885,9 @@ def add_user():
                     return render_template('post_form.html',
                                            post_exist_error=post_exist_error,
                                            form=form,
-                                           current_name=current_name)
+                                           current_name=current_name,
+                                           current_type=current_type,
+                                           current_id=current_id)
             last_row = rows[len(rows)-1]
             _id = last_row['id'] + 1
             _status = 1
@@ -846,7 +895,7 @@ def add_user():
             _updated_user_id = session.get('id')
             _deleted_user_id = None
             now = datetime.now()
-            current_time = now.strftime("%Y-%m-%d|%H:%M:%S")
+            current_time = now.strftime("%Y-%m-%d")
             _created_at = current_time
             _updated_at = current_time
             _deleted_at = None
@@ -864,28 +913,40 @@ def add_user():
             conn.commit()
             resp = jsonify('Post added successfully!')
             resp.status_code = 200
-            return 'Going to post list'
+            return redirect('/posts')
         return render_template('post_form.html', form=postForm(),
-                               current_name=current_name)
+                               current_name=current_name,
+                               current_type=current_type,
+                               current_id=current_id)
     except Exception as e:
         print(e)
-    
+
 
 @app.route('/posts')
 def posts():
-    try:
-        conn = mysql.connect()
-        cursor = conn.cursor(pymysql.cursors.DictCursor)
-        cursor.execute("SELECT * FROM post_table")
-        rows = cursor.fetchall()
-        resp = jsonify(rows)
-        resp.status_code = 200
-        return resp
-    except Exception as e:
-        print(e)
-    finally:
-        cursor.close()
-        conn.close()
+    # if request.method == 'POST':
+    if True:
+        try:
+            current_name = session.get('name')
+            current_type = session.get('type')
+            current_id = session.get('id')
+            conn = mysql.connect()
+            cursor = conn.cursor(pymysql.cursors.DictCursor)
+            cursor.execute("SELECT * FROM post_table")
+            rows = cursor.fetchall()
+            resp = jsonify(rows)
+            resp.status_code = 200
+            # return jsonify(rows)
+            print(current_type)
+            return render_template('posts_list.html', rows=rows,
+                                   current_name=current_name,
+                                   current_type=current_type,
+                                   current_id=current_id)
+        except Exception as e:
+            print(e)
+        finally:
+            cursor.close()
+            conn.close()
 
 
 @app.route('/post/<int:id>')
@@ -909,37 +970,56 @@ def post(id):
 @app.route('/post_update/<int:id>')
 def update_post(id):
     try:
-        _id = '1'
-        _title = 'first title'
-        _description = 'This is the first updated post.'
-        _status = '1'
-        _create_user_id = "1"
-        _updated_user_id = "1"
-        _deleted_user_id = "1"
-        _created_at = '2022-02-01'
-        _updated_at = '2022-02-01'
-        _deleted_at = '2023-01-01'
-        # validate the received values
-        if _title and _description and _status and _create_user_id and\
-            _updated_user_id and _deleted_user_id and _created_at and\
-                _updated_at and _deleted_at:
-            # save edits
-            sql = "UPDATE post_table SET id=%s, title=%s, description=%s, status=%s,\
-                create_user_id=%s, updated_user_id=%s, deleted_user_id=%s,\
-                    created_at=%s, updated_at=%s, deleted_at=%s\
-                    WHERE id=%s"
-            data = (_id, _title, _description, _status, _create_user_id,
-                    _updated_user_id, _deleted_user_id, _created_at,
-                    _updated_at, _deleted_at, id)
-            conn = mysql.connect()
-            cursor = conn.cursor()
-            cursor.execute(sql, data)
-            conn.commit()
-            resp = jsonify('Post updated successfully!')
-            resp.status_code = 200
-            return resp
-        else:
-            return not_found()
+        current_name = session.get('name')
+        current_id = session.get('id')
+        current_type = session.get('type')
+        form = postForm()
+        conn = mysql.connect()
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
+        cursor.execute("SELECT * FROM post_table WHERE id={}".format(id))
+        row = cursor.fetchone()
+        _title = row['title']
+        _description = row['description']
+        print('This is the des:{}'.format(_description))
+        _status = row['status']
+        return render_template('post_update_page.html', _title=_title,
+                               _description=_description,
+                               _status=_status,
+                               current_name=current_name,
+                               current_id=current_id,
+                               current_type=current_type,
+                               form=form)
+        #_id = '1'
+        #_title = 'first title'
+        #_description = 'This is the first updated post.'
+        #_status = '1'
+        #_create_user_id = "1"
+        #_updated_user_id = "1"
+        #_deleted_user_id = "1"
+        #_created_at = '2022-02-01'
+        #_updated_at = '2022-02-01'
+        #_deleted_at = '2023-01-01'
+        ## validate the received values
+        #if _title and _description and _status and _create_user_id and\
+        #    _updated_user_id and _deleted_user_id and _created_at and\
+        #        _updated_at and _deleted_at:
+        #    # save edits
+        #    sql = "UPDATE post_table SET id=%s, title=%s, description=%s, status=%s,\
+        #        create_user_id=%s, updated_user_id=%s, deleted_user_id=%s,\
+        #            created_at=%s, updated_at=%s, deleted_at=%s\
+        #            WHERE id=%s"
+        #    data = (_id, _title, _description, _status, _create_user_id,
+        #            _updated_user_id, _deleted_user_id, _created_at,
+        #            _updated_at, _deleted_at, id)
+        #    conn = mysql.connect()
+        #    cursor = conn.cursor()
+        #    cursor.execute(sql, data)
+        #    conn.commit()
+        #    resp = jsonify('Post updated successfully!')
+        #    resp.status_code = 200
+        #    return resp
+        #else:
+        #    return not_found()
     except Exception as e:
         print(e)
     finally:
@@ -956,7 +1036,7 @@ def delete_post(id):
         conn.commit()
         resp = jsonify('User deleted successfully!')
         resp.status_code = 200
-        return resp
+        return redirect('/posts')
     except Exception as e:
         print(e)
     finally:

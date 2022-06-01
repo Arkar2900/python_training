@@ -23,7 +23,7 @@
       <form method="POST">
         {{ form.hidden_tag() }}
         {{ form.post_title.label }}
-        <p>{{ form.post_title}}</p>
+        <p>{{ form.post_title(value = _title)}}</p>
         {% if no_title_error %}
         <br>
           <p class="req_message">{{ no_title_error }}</p><br>
@@ -38,11 +38,15 @@
         {% endif %}
         <br><br>
         {{ form.post_description.label }}
-        <p><textarea name="post_description" id="post_description" cols="30" rows="3"></textarea></p><br>
+        <p><textarea name="post_description" id="post_description" cols="30" rows="3">{{ _description}}</textarea></p><br>
         {% if no_des_error %}
           <p class="req_message">{{ no_des_error }}</p><br>
         {% endif %}
         <br><br>
+        <input type="radio" id="status_1" name="fav_language" value="1">
+        <label for="status_1">Status 1</label><br>
+        <input type="radio" id="status_0" name="fav_language" value="0">
+        <label for="status_0">Status 0</label><br>
         {{ form.confirm_post(class='main_btn')}}
         {{ form.clear_post(class='main_btn') }}
     </form>

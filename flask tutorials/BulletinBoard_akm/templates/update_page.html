@@ -7,7 +7,7 @@
       <div class="left_nav">
         <h2 class="logo">SCM Bulletin Board</h2>
         <a href="/users" class="user_list">Users</a>
-        <a href="#" class="post_list">Posts</a>
+        <a href="/posts" class="post_list">Posts</a>
       </div>
       <div class="right_nav">
         <h2 class="login_user">{{ current_name }}</h2>
@@ -58,7 +58,7 @@
         {% endif %}
         <br><br>
         {{ form.address.label }}
-        <p>{{ form.address(value= _address )}}</p>
+        <p><textarea name="address" id="address" cols="30" rows="10">{{ _address }}</textarea></p>
         <br><br>
         <a href="/password_change">Change Password</a>
         <br><br><br>
