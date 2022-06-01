@@ -71,6 +71,10 @@ class postForm(FlaskForm):
     clear_post = SubmitField('Clear')
     create_post = SubmitField('Create')
     cancel_post = SubmitField('Cancel')
+    update_confirm_post = SubmitField('Confirm')
+    update_clear_post = SubmitField('Clear')
+    update_create_post = SubmitField('Create')
+    update_cancel_post = SubmitField('Cancel')
 
 
 # Home page/ login page
@@ -221,7 +225,8 @@ def users():
 
 @app.route('/search', methods=['POST', 'GET'])
 def search():
-    if request.form['search']:
+    print('you reached search')
+    if request.form.get('search'):
         conn = mysql.connect()
         cursor = conn.cursor(pymysql.cursors.DictCursor)
         try:
@@ -368,7 +373,7 @@ def search():
         finally:
             cursor.close()
             conn.close()
-    elif request.form['add']:
+    elif request.form.get('add'):
         return redirect('/user_create_page')
 
 
@@ -385,7 +390,9 @@ def update_user(id):
             session['check_once'] = 2
             i = session.get('check_once')
         session['update_id'] = id
+        _update_id = id
         current_name = session.get('name')
+        current_id = session.get('id')
         form = userForm()
         conn = mysql.connect()
         cursor = conn.cursor(pymysql.cursors.DictCursor)
@@ -399,8 +406,13 @@ def update_user(id):
             _type = 'User'
         _phone = row['phone']
         _date = row['dob']
+        _raw_profile = row['profile']
+        path_list = _raw_profile.split("\\")
+        _primary_profile = path_list[len(path_list) - 1]
+        print("you reached to /update")
+        print('the profile is: {}'.format(_primary_profile))
         _address = row['address']
-        _profile = row['profile']
+        print('the address is: {}'.format(_address))
         userForm.address = TextAreaField('Address', default=_address)
         if form.confirm_update_btn.data and form.validate_on_submit() and\
            request.method == "POST":
@@ -418,6 +430,8 @@ def update_user(id):
             _address = form.address.data
             session['input_address'] = _address
             _profile = form.profile.data
+            # Here to change the code!
+            # Also need to check in html for profile input form
             session['input_profile'] = _profile
             name_error = None
             email_requ_error = None
@@ -450,36 +464,74 @@ only number contains 11 digits. (09xxxxxxxxx)!'
             if _input_date > present or not _input_date:
                 date_error = 'It should not be empty and date of birth is bigger than today date. '
                 cannot_insert = True
+            if _input_date > present or not _input_date:
+                date_error = 'Date should not be empty and date of birth is bigger than today date.'
+                cannot_insert = True
+
+            def allowed_file(filename):
+                return '.' in filename and filename.rsplit('.', 1)[1].lower()\
+                    in ALLOWED_EXTENSIONS
+            profile_has = False
+            if _profile:
+                print('there is profile !!!!')
+                profile_has = True
+                print("this is the file: {}".format(_profile))
+                _file = _profile.filename
+                print(_file, '  ', type(_file))
+                if _file and not allowed_file(_file):
+                    file_error = 'The chosen file is not valid file type. Allow\
+    file type are "jpg", "png", and "jpeg"'
+                    cannot_insert = True
             if cannot_insert:
                 return render_template(
                     'update_page.html', name_error=name_error,
                     email_requ_error=email_requ_error,
                     not_email_error=not_email_error,
                     phone_error=phone_error, date_error=date_error,
-                    form=userForm(),
+                    _name=_name, _email=_email, _type=_type,
+                    _phone=_phone, _date=_date,
+                    _address=_address, _profile=_profile,
+                    file_error=file_error, form=form,
                     current_name=current_name)
             if _type == '0':
                 _for_user_type = 'User'
             else:
                 _for_user_type = 'Admin'
-            #my_file = _profile
-            #print(my_file)
-            #path = os.getcwd()
-            #folder_name = r'\temporary'
-            #folder_to_save_files = path + folder_name
-            #if not os.path.exists(folder_to_save_files):
-            #    os.mkdir(folder_to_save_files)
-            #print(folder_to_save_files)
-            #my_file.save(os.path.join(folder_to_save_files, my_file.filename))
-            #print(folder_to_save_files)
-            #_temp_profile = url_for('temporary', filename=_profile)
-            #print(_temp_profile)
+            _update_id = session.get('update_id')
+            if _profile:
+                print(folder_to_save_files)
+                print('This is the uploaded file:  {}'.format(_file))
+                if not os.path.exists(folder_to_save_files):
+                    os.mkdir(folder_to_save_files)
+                _profile.save(os.path.join(folder_to_save_files,
+                                           _profile.filename))
+                print(folder_to_save_files)
+                print(type(_profile))
+                print("Saving is done")
+                _folder_file = 'temporary/' + _file
+                print(type(_file))
+                session['input_profile_path'] = folder_to_save_files +\
+                    r'\{}'.format(_file)
+                return render_template('update_show_form.html',
+                                       _user_name=_user_name,
+                                       _user_email=_user_email,
+                                       _type=_for_user_type,
+                                       _phone=_phone, _date=_date,
+                                       _folder_file=_folder_file,
+                                       _address=_address, _profile=_profile,
+                                       form=userForm(),
+                                       profile_has=profile_has,
+                                       current_name=current_name,
+                                       current_id=current_id)
             return render_template('update_show_form.html',
                                    _user_name=_user_name,
                                    _user_email=_user_email,
                                    _type=_for_user_type,
                                    _phone=_phone, _date=_date,
-                                   _address=_address, _profile=_profile,
+                                   _address=_address,
+                                   _primary_profile=_primary_profile,
+                                   profile_has=profile_has,
+                                   _update_id=_update_id,
                                    form=userForm(), current_name=current_name)
         elif (request.method == 'POST' and
               form.clear_btn.data):
@@ -501,7 +553,6 @@ only number contains 11 digits. (09xxxxxxxxx)!'
         if request.method == 'POST' and form.update_create_btn.data:
             _user_name = session.get('input_name')
             _user_email = session.get('input_email')
-            _profile = session.get('input_profile')
             _type = session.get('input_type')
             _phone = session.get('input_phone')
             _address = session.get('input_address')
@@ -515,7 +566,7 @@ only number contains 11 digits. (09xxxxxxxxx)!'
             cursor = conn.cursor(pymysql.cursors.DictCursor)
             now = datetime.now()
             current_time = now.strftime("%Y-%m-%d")
-            _profile = 'rre21'
+            _profile = session.get('input_profile_path')
             _update_user_id = session.get('id')
             _update_at = current_time
             _id = id
@@ -535,7 +586,9 @@ only number contains 11 digits. (09xxxxxxxxx)!'
         return render_template('update_page.html', _name=_name,
                                _email=_email, _type=_type,
                                _phone=_phone, _date=_date,
-                               _address=_address, _profile=_profile,
+                               _address=_address,
+                               _primary_profile=_primary_profile,
+                               _update_id=_update_id,
                                form=form, done=done, i=i,
                                current_name=current_name)
     except Exception as e:
@@ -755,6 +808,7 @@ file type are "jpg", "png", and "jpeg"'
             _update_at = current_time
             user_folder = r'\{}'.format(_id)
             for_user_profile = first_folder + user_folder
+            print("this is the check point of user create")
             if not os.path.exists(for_user_profile):
                 os.mkdir(for_user_profile)
             # _profile is filename because it got from session.
@@ -824,7 +878,7 @@ def post_search():
 
 
 @app.route('/post_create_page', methods=['POST', 'GET'])
-def add_user():
+def add_post():
     try:
         form = postForm()
         current_name = session.get('name')
@@ -859,7 +913,7 @@ def add_user():
                                        current_name=current_name,
                                        current_id=current_id,
                                        current_type=current_type)
-            return render_template('show_post_form.html',
+            return render_template('show_update_post.html',
                                    _post_title=_post_title,
                                    _post_description=_post_description,
                                    form=form,
@@ -870,6 +924,7 @@ def add_user():
             form.post_title.data = ''
             form.post_description.data = ''
             return render_template('post_form.html', form=form,
+                                   current_id=current_id,
                                    current_name=current_name)
         if request.method == 'POST' and form.create_post.data:
             _post_title = session.get('input_post_title')
@@ -967,7 +1022,45 @@ def post(id):
         conn.close()
 
 
-@app.route('/post_update/<int:id>')
+@app.route('/user_detail/<int:id>')
+def user_detail(id):
+    try:
+        current_name = session.get('name')
+        current_id = session.get('id')
+        current_type = session.get('type')
+        form = userForm()
+        conn = mysql.connect()
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
+        cursor.execute("SELECT * FROM user_table WHERE id={}".format(id))
+        row = cursor.fetchone()
+        _name = row['name']
+        _email = row['email']
+        _password = '***'
+        _digit_type = row['type']
+        if _digit_type == '1':
+            _type = 'Admin'
+        else:
+            _type = 'User'
+        _phone = row['phone']
+        _dob = row['dob']
+        _address = row['address']
+        print('this is name: {}'. format(_name))
+        typeOfid = type(current_id)
+        print('this is current id: {},{}'.format(typeOfid,current_id))
+        return render_template('user_detail.html', _name=_name,
+                               _email=_email,
+                               _password=_password,
+                               _type=_type, _phone=_phone,
+                               _dob=_dob, _address=_address,
+                               form=form,
+                               current_id=current_id,
+                               current_name=current_name,
+                               current_type=current_type)
+    except Exception as e:
+        print(e)
+    
+
+@app.route('/post_update/<int:id>', methods=['POST', 'GET'])
 def update_post(id):
     try:
         current_name = session.get('name')
@@ -982,6 +1075,70 @@ def update_post(id):
         _description = row['description']
         print('This is the des:{}'.format(_description))
         _status = row['status']
+        print('this is the status:{}'.format(_status))
+        print(type(_status))
+        if form.update_confirm_post.data and request.method == 'POST':
+            _post_title = form.post_title.data
+            session['input_post_title'] = _post_title
+            _post_description = form.post_description.data
+            session['input_post_description'] = _post_description
+            no_title_error = None
+            long_title_error = None
+            no_des_error = None
+            cannot_insert = False
+            if not _post_title:
+                no_title_error = 'Title is required.'
+                cannot_insert = True
+            if len(_post_title) > 255:
+                long_title_error = 'Title must be less than 255 letters.'
+                cannot_insert = True
+            if not _post_description:
+                no_des_error = 'Description is required.'
+                cannot_insert = True
+            if cannot_insert:
+                return render_template('post_update_page.html',
+                                       no_title_error=no_title_error,
+                                       long_title_error=long_title_error,
+                                       no_des_error=no_des_error,
+                                       form=postForm(),
+                                       current_name=current_name,
+                                       current_id=current_id,
+                                       current_type=current_type)
+            return render_template('show_update_post.html',
+                                   _post_title=_post_title,
+                                   _post_description=_post_description,
+                                   form=form,
+                                   current_name=current_name,
+                                   current_type=current_type,
+                                   current_id=current_id)
+        elif (request.method == 'POST' and form.update_clear_post.data):
+            form.post_title.data = ''
+            form.post_description.data = ''
+            return render_template('post_update_page.html', form=form,
+                                   current_id=current_id,
+                                   current_name=current_name)
+        if request.method == 'POST' and form.update_create_post.data:
+            print('You pressed Create Btn,!')
+            _post_title = session.get('input_post_title')
+            _post_description = session.get('input_post_description')
+            _post_status = request.form.get('options')
+            _status = _post_status
+            _updated_user_id = session.get('id')
+            now = datetime.now()
+            current_time = now.strftime("%Y-%m-%d")
+            _updated_at = current_time
+            sql = "UPDATE post_table SET id=%s, title=%s, description=%s, status=%s,\
+                updated_user_id=%s, updated_at=%s WHERE id=%s"
+            data = (id, _post_title, _post_description, _status,
+                    _updated_user_id, _updated_at, id)
+            conn = mysql.connect()
+            cursor = conn.cursor()
+            cursor.execute(sql, data)
+            conn.commit()
+            resp = jsonify('Post updated successfully!')
+            resp.status_code = 200
+            return redirect('/posts')
+        print('You reahed here')
         return render_template('post_update_page.html', _title=_title,
                                _description=_description,
                                _status=_status,
@@ -989,37 +1146,6 @@ def update_post(id):
                                current_id=current_id,
                                current_type=current_type,
                                form=form)
-        #_id = '1'
-        #_title = 'first title'
-        #_description = 'This is the first updated post.'
-        #_status = '1'
-        #_create_user_id = "1"
-        #_updated_user_id = "1"
-        #_deleted_user_id = "1"
-        #_created_at = '2022-02-01'
-        #_updated_at = '2022-02-01'
-        #_deleted_at = '2023-01-01'
-        ## validate the received values
-        #if _title and _description and _status and _create_user_id and\
-        #    _updated_user_id and _deleted_user_id and _created_at and\
-        #        _updated_at and _deleted_at:
-        #    # save edits
-        #    sql = "UPDATE post_table SET id=%s, title=%s, description=%s, status=%s,\
-        #        create_user_id=%s, updated_user_id=%s, deleted_user_id=%s,\
-        #            created_at=%s, updated_at=%s, deleted_at=%s\
-        #            WHERE id=%s"
-        #    data = (_id, _title, _description, _status, _create_user_id,
-        #            _updated_user_id, _deleted_user_id, _created_at,
-        #            _updated_at, _deleted_at, id)
-        #    conn = mysql.connect()
-        #    cursor = conn.cursor()
-        #    cursor.execute(sql, data)
-        #    conn.commit()
-        #    resp = jsonify('Post updated successfully!')
-        #    resp.status_code = 200
-        #    return resp
-        #else:
-        #    return not_found()
     except Exception as e:
         print(e)
     finally:

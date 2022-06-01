@@ -5,14 +5,18 @@
 <nav>
   <div class="left_nav">
     <h2 class="logo">SCM Bulletin Board</h2>
+    {% if current_type == '1' %}
     <a href="/users" class="user_list">Users</a>
+    {% endif %}
+    {% if current_type == '0' %}
+    <a href="/user_detail/{{ current_id }}" class="user_list">User</a>
+    {% endif %}
     <a href="/posts" class="post_list">Posts</a>
   </div>
   <div class="right_nav">
     <h2 class="login_user">{{ current_name }}</h2>
     <a href="/logout" class="logout">logout</a>
   </div>
-
 </nav>
     <div class="left_blk">
       <form method="POST">

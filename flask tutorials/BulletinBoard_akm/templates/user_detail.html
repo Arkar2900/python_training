@@ -5,23 +5,32 @@
 <nav>
   <div class="left_nav">
     <h2 class="logo">SCM Bulletin Board</h2>
+    {% if current_type == '1' %}
     <a href="/users" class="user_list">Users</a>
+    {% endif %}
+    {% if current_type == '0' %}
+    <a href="/user_detail/{{ current_id }}" class="user_list">User</a>
+    {% endif %}
     <a href="/posts" class="post_list">Posts</a>
   </div>
   <div class="right_nav">
     <h2 class="login_user">{{ current_name }}</h2>
     <a href="/logout" class="logout">logout</a>
   </div>
-
 </nav>
     <div class="left_blk">
+      <h2>User profile</h2>
+      <a href="/update/{{ current_id }}">Edit</a>
       <form method="POST">
         {{ form.hidden_tag() }}
         {{ form.name.label }}
-        <p>{{ _user_name}}</p>
+        <p>{{ _name}}</p>
         <br><br>
         {{ form.email.label }}
-        <p>{{ _user_email}}</p>
+        <p>{{ _email}}</p>
+        <br><br>
+        {{ form.password.label }}
+        <p>{{ _password }}</p>
         <br><br>
         {{ form.type.label }}
         <p>{{ _type}}</p>
@@ -30,23 +39,10 @@
         <p>{{ _phone}}</p>
         <br><br>
         {{ form.date.label }}
-        <p>{{ _date}}</p>
+        <p>{{ _dob}}</p>
         <br><br>
         {{ form.address.label }}
         <p>{{ _address}}</p>
-        <br><br>
-        {{ form.profile.label }}
-        <br>
-        {% if profile_has %}
-        <img src="{{ url_for('static', filename=_folder_file)}}" alt="User profile">
-        <br><br>
-        {% else %}
-        <img src="/static/{{_update_id}}/{{_primary_profile}}" alt="User profile">
-        <br><br>
-        {% endif %}
-        {{ form.update_create_btn(class='main_btn')}}
-        <br>
-        {{ form.update_cancel_btn(class='main_btn') }}
     </form>
     </div>
 {% endblock %}

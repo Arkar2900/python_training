@@ -16,7 +16,7 @@
     </nav>
     <h2>User List</h2>
     {% if current_type == '1' %}
-      <form class="admin_view" action="/search" method="post">
+      <form class="admin_view" action="/search" method='POST'>
         <input type="text" placeholder="Name" class="input_box" name="user_name">
         <input type="text" placeholder="Email" class="input_box" name="user_email">
         <input placeholder="Created From" class="input_box" type="text" onfocus="(this.type='date')" id="from_date" name="from_date">

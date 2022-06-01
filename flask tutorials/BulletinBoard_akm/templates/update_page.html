@@ -58,12 +58,18 @@
         {% endif %}
         <br><br>
         {{ form.address.label }}
-        <p><textarea name="address" id="address" cols="30" rows="10">{{ _address }}</textarea></p>
+        <p><textarea name="address" id="address" cols="20" rows="5">{{ _address }}</textarea></p><br><br><br>
         <br><br>
         <a href="/password_change">Change Password</a>
         <br><br><br>
         {{ form.profile.label }}
-        <p>{{ form.profile(value= _profile )}}</p>
+        <p>{{ form.profile}}</p>
+        <img src="/static/{{_update_id}}/{{_primary_profile}}" alt="">
+        <br>
+        {% if file_error %}
+          <p class="req_message">{{ file_error }}</p>
+        {% endif %}
+        
         <br><br>
         {{ form.confirm_update_btn(class='main_btn')}}
         {{ form.update_clear_btn(class='main_btn') }}

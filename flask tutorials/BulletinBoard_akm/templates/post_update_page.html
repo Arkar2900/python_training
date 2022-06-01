@@ -10,7 +10,7 @@
         <a href="/users" class="user_list">Users</a>
         {% endif %}
         {% if current_type == '0' %}
-        <a href="/update/{{ current_id }}" class="user_list">User</a>
+        <a href="/user_detail/{{ current_id }}" class="user_list">User</a>
         {% endif %}
         <a href="/posts" class="post_list">Posts</a>
       </div>
@@ -43,12 +43,19 @@
           <p class="req_message">{{ no_des_error }}</p><br>
         {% endif %}
         <br><br>
-        <input type="radio" id="status_1" name="fav_language" value="1">
+        {% if _status == 1 %}
+        <input type="radio" id="status_1" name="options" value="1" checked>
         <label for="status_1">Status 1</label><br>
-        <input type="radio" id="status_0" name="fav_language" value="0">
+        <input type="radio" id="status_0" name="options" value="0">
         <label for="status_0">Status 0</label><br>
-        {{ form.confirm_post(class='main_btn')}}
-        {{ form.clear_post(class='main_btn') }}
+        {% else %}
+        <input type="radio" id="status_1" name="options" value="1" >
+        <label for="status_1">Status 1</label><br>
+        <input type="radio" id="status_0" name="options" value="0" checked>
+        <label for="status_0">Status 0</label><br>
+        {% endif %}
+        {{ form.update_confirm_post(class='main_btn')}}
+        {{ form.update_clear_post(class='main_btn') }}
     </form>
     </div>
   </div>
