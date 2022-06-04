@@ -14,15 +14,39 @@
         <a href="/logout" class="logout">logout</a>
       </div>
     </nav>
+    {%  if current_type == 1 %}
+    <form action="/search" method="POST">
+      <input type="submit" value="Add" class="input_box sa_btn" name="add">
+    </form><br>
+    {% endif%}
+    
     <h2>User List</h2>
+    
     {% if current_type == '1' %}
       <form class="admin_view" action="/search" method='POST'>
+        
+        {% if _user_name %}
+        <input type="text" placeholder="Name" class="input_box" name="user_name" value="{{_user_name}}">
+        {% else %}
         <input type="text" placeholder="Name" class="input_box" name="user_name">
+        {% endif %}
+        {% if _user_email %}
+        <input type="text" placeholder="Email" class="input_box" name="user_email" value="{{_user_email}}">
+        {% else %}
         <input type="text" placeholder="Email" class="input_box" name="user_email">
+        {% endif %}
+        {% if _from_date %}
+        <input placeholder="Created From" class="input_box" type="text" onfocus="(this.type='date')" id="from_date" name="from_date" value="{{_from_date}}">
+        {% else %}
         <input placeholder="Created From" class="input_box" type="text" onfocus="(this.type='date')" id="from_date" name="from_date">
+        {% endif %}
+        {% if _to_date %}
+        <input placeholder="Created To" class="input_box" type="text" onfocus="(this.type='date')" id="to_date" name="to_date" value="{{_to_date}}">
+        {% else %}
         <input placeholder="Created To" class="input_box" type="text" onfocus="(this.type='date')" id="to_date" name="to_date">
+        {% endif %}
         <input type="submit" value="Search" class="input_box sa_btn" name="search">
-        <input type="submit" value="Add" class="input_box sa_btn" name="add">
+        <input type="submit" value="Cancel" class="input_box sa_btn" name="cancel">
       </form>
 
     {% endif %}

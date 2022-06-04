@@ -19,7 +19,7 @@
       <br>
           <p class="req_message">{{ done }}</p><br><br>
       {% endif %}
-      <form method="POST">
+      <form method="POST" enctype="multipart/form-data">
         {{ form.hidden_tag() }}
         {{ form.name.label }}
         <p>{{ form.name(value= _name ) }}</p>
@@ -41,7 +41,15 @@
         {% endif %}
         <br><br>
         {{ form.type.label }}
-        <p>{{ form.type(value= _type )}}</p>
+        <p><select id="type" name="type" value="User">
+          {% if _type == 'Admin' %}
+          <option value="1" selected>Admin</option>
+          <option value="0">User</option>
+          {% else %}
+          <option value="1" >Admin</option>
+          <option value="0" selected>User</option>
+          {% endif %}
+        </select></p>
         <br><br>
         {{ form.phone.label }}
         <p>{{ form.phone(value= _phone )}}</p>
@@ -63,8 +71,8 @@
         <a href="/password_change">Change Password</a>
         <br><br><br>
         {{ form.profile.label }}
-        <p>{{ form.profile}}</p>
-        <img src="/static/{{_update_id}}/{{_primary_profile}}" alt="">
+        <p><input type="file" name="file" ></p>
+        <img src="/static/{{_update_id}}/{{_primary_profile}}" alt="" width="120" height="90">
         <br>
         {% if file_error %}
           <p class="req_message">{{ file_error }}</p>

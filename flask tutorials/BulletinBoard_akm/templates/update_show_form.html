@@ -15,7 +15,7 @@
 
 </nav>
     <div class="left_blk">
-      <form method="POST">
+      <form method="POST" enctype="multipart/form-data">
         {{ form.hidden_tag() }}
         {{ form.name.label }}
         <p>{{ _user_name}}</p>
@@ -38,10 +38,10 @@
         {{ form.profile.label }}
         <br>
         {% if profile_has %}
-        <img src="{{ url_for('static', filename=_folder_file)}}" alt="User profile">
+        <img src="{{ url_for('static', filename=_folder_file)}}" alt="User profile" width="120" height="90">
         <br><br>
         {% else %}
-        <img src="/static/{{_update_id}}/{{_primary_profile}}" alt="User profile">
+        <img src="/static/{{_update_id}}/{{_primary_profile}}" alt="User profile" width="120" height="90">
         <br><br>
         {% endif %}
         {{ form.update_create_btn(class='main_btn')}}

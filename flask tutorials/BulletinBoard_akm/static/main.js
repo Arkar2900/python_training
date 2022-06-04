@@ -29,4 +29,8 @@ $(document).ready(function () {
         console.log('http://localhost:5000/posts')
       }
     });
+    //$('.download_btn').click(function() {
+    //    location.href = "http://localhost:5000/download_file"
+    //    console.log("http://localhost:5000/download_file")
+    //});
 });

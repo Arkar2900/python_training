@@ -21,12 +21,18 @@
     </nav>
     <h2>User List</h2>
     
-      <form class="user_view" action="/post_search" method="post">
+      <form class="user_view" action="/post_search" method='POST' enctype="multipart/form-data">
         <input type="text"  class="input_box" name="search_item">
-        <input type="submit" value="Search" class="input_box sa_btn" name="search">
-        <input type="submit" value="Add" class="input_box sa_btn" name="add">
-        <input type="submit" value="Upload" class="input_box sa_btn" name="upload">
-        <input type="submit" value="Download" class="input_box sa_btn" name="download">
+        <input type="submit" value="Search" class="input_box sa_btn" name="search_post">
+      </form>
+      <form class="user_view" action="/post_create_page" method="POST" enctype="multipart/form-data">
+        <input type="submit" value="Add" class="input_box sa_btn" name="add_post">
+      </form>
+      <form class="user_view" action="/csv_redirect" method="POST" enctype="multipart/form-data">
+        <input type="submit" value="Upload" class="input_box sa_btn" name="upload_post">
+      </form>
+      <form class="user_view" action="/download_file" method="POST" enctype="multipart/form-data">
+        <input type="submit" value="Download" class="input_box sa_btn download_btn" name="download">
       </form>
 
     
